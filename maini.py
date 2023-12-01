@@ -30,17 +30,22 @@ grenade_img = pygame.image.load('project-VAK/img/items/grenade.png').convert_alp
 BG = (144, 201, 120)
 RED = (255, 0, 0)
 
+font = pygame.font.Font("project-VAK/img/gui/ThaleahFat.ttf", 48)
+
+
+def draw_text(text, font, text_col, x, y):
+	img = font.render(text, True, text_col)
+	screen.blit(img, (x, y))
+
 def draw_bg():
 	screen.fill(BG)
 	pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 
-
 class Player(pygame.sprite.Sprite):
-	def __init__(self, char_type, x, y, scale, speed, ammo, grenades):
+	def __init__(self, x, y, scale, speed, ammo, grenades):
 		pygame.sprite.Sprite.__init__(self)
 		self.alive = True
-		self.char_type = char_type
 		self.speed = speed
 		self.ammo = ammo
 		self.start_ammo = ammo
@@ -71,6 +76,7 @@ class Player(pygame.sprite.Sprite):
 		self.image = self.animation_list[self.action][self.frame_index]
 		self.rect = self.image.get_rect()
 		self.rect.center = (x, y)
+
 
 	def shoot(self):
 			if self.shoot_coldown == 0 and self.ammo > 0:
@@ -145,7 +151,6 @@ class Player(pygame.sprite.Sprite):
 
 	def draw(self):
 		screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
-
 
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, x, y, direction):
@@ -245,15 +250,69 @@ enemys_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 grenade_group = pygame.sprite.Group()
 expl_group = pygame.sprite.Group()
-player = Player('player', 200, 200, 3, 5, 20, 5)
-enemy = Player('enemy', 800, 200, 3, 5, 20, 0)
+
+
+player = Player(200, 200, 3, 5, 20, 5)
+enemy = Player(400, 200, 3, 5, 20, 0)
+enemy1 = Player(400, 400, 3, 5, 20, 0)
 enemys_group.add(enemy)
+enemys_group.add(enemy1)
 run = True
 while run:
 
 	clock.tick(FPS)
 
 	draw_bg()
+	draw_text(f'HEALTH', font, (0, 0, 0), 843, 15)
+
+	if player.health > 75:
+		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar4.png").convert_alpha()
+		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+		screen.blit(img_bar_health, (670, 23))
+	if player.health <= 75 and player.health > 40:
+		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar3.png").convert_alpha()
+		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+		screen.blit(img_bar_health, (670, 23))
+	if player.health <= 40 and player.health > 10:
+		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar2.png").convert_alpha()
+		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+		screen.blit(img_bar_health, (670, 23))
+	if player.health <= 10 and player.health > 0:
+		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar1.png").convert_alpha()
+		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+		screen.blit(img_bar_health, (670, 23))
+	if player.health == 0:
+		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar0.png").convert_alpha()
+		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+		screen.blit(img_bar_health, (670, 23))
+	
+	draw_text(f'AMMO', font, (0, 0, 0), 523, 15)
+	if player.ammo > 15:
+		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo5.png").convert_alpha()
+		img_bar_ammo  = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	if player.ammo <= 15 and player.ammo > 10:
+		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo4.png").convert_alpha()
+		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	if player.ammo <= 10 and player.ammo > 5:
+		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo3.png").convert_alpha()
+		img_bar_ammo = pygame.transform.scale(img_bar_ammo, (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo .get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	if player.ammo <= 5 and player.ammo > 0:
+		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo2.png").convert_alpha()
+		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	if player.ammo == 1:
+		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo1.png").convert_alpha()
+		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	if player.ammo == 0:
+		img_bar_ammo= pygame.image.load("project-VAK/img/gui/ammo0.png").convert_alpha()
+		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+		screen.blit(img_bar_ammo, (440, 25))
+	
+
 
 	player.update()
 	player.draw()
@@ -267,7 +326,6 @@ while run:
 	bullet_group.draw(screen)
 	grenade_group.draw(screen)
 	expl_group.draw(screen)
-
 	if player.alive:
 		if shoot:
 			player.shoot()
