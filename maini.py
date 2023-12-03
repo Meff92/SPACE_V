@@ -4,7 +4,8 @@ import os
 
 pygame.init()
 
-SCREEN_WIDTH = 1000
+
+SCREEN_WIDTH = 990
 SCREEN_HEIGHT = int(SCREEN_WIDTH * 0.8)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -14,15 +15,18 @@ pygame.display.set_caption('SPACE-V')
 clock = pygame.time.Clock()
 FPS = 60
 
-#define game variables
-GRAVITY = 0.8
 
-#define player action variables
+GRAVITY = 0.4
+
 moving_left = False
 moving_right = False
 shoot = False
 grenade = False
 grenade_thrown = False
+start_game = False
+
+start_b = pygame.image.load('project-VAK/img/gui/play_btt.png').convert_alpha()
+exit_b = pygame.image.load('project-VAK/img/gui/exit_btt.png').convert_alpha()
 
 bullet_img = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
 grenade_img = pygame.image.load('project-VAK/img/items/grenade.png').convert_alpha()
@@ -31,7 +35,7 @@ BG = (144, 201, 120)
 RED = (255, 0, 0)
 
 font = pygame.font.Font("project-VAK/img/gui/ThaleahFat.ttf", 48)
-
+font_big = pygame.font.Font("project-VAK/img/gui/ThaleahFat.ttf", 158)
 
 def draw_text(text, font, text_col, x, y):
 	img = font.render(text, True, text_col)
@@ -89,35 +93,26 @@ class Player(pygame.sprite.Sprite):
 		self.update_animation()
 		self.check_alive()
 		if self.shoot_coldown != 0:
-			self.shoot_coldown -= 1
+			self.shoot_coldown -= 1	
+
+			 
 
 	def move(self, moving_left, moving_right):
-		dx = 0
-		dy = 0
+		if moving_left and moving_right:
+			dx = 0
+		else:
+			dx = -self.speed if moving_left else self.speed if moving_right else 0
 
-		if moving_left:
-			dx = -self.speed
-			self.flip = True
-			self.direction = -1
-		if moving_right:
-			dx = self.speed
-			self.flip = False
-			self.direction = 1
+		self.flip = moving_left
+		self.direction = -1 if moving_left else 1 if moving_right else self.direction
 
-		if self.jump == True and self.in_air == False:
-			self.vel_y = -11	
-			self.jump = False
-			self.in_air = True
+		if self.jump and not self.in_air:
+			self.vel_y, self.jump, self.in_air = -11, False, True
 
-		self.vel_y += GRAVITY
-		if self.vel_y > 10:
-			self.vel_y
-
-		dy += self.vel_y
-
+		self.vel_y = min(self.vel_y + GRAVITY, 10)
+		dy = self.vel_y
 		if self.rect.bottom + dy > 300:
-			dy = 300 - self.rect.bottom
-			self.in_air = False
+			dy, self.in_air = 300 - self.rect.bottom, False
 
 		self.rect.x += dx
 		self.rect.y += dy
@@ -179,7 +174,7 @@ class Bullet(pygame.sprite.Sprite):
 class Grenade(pygame.sprite.Sprite):
 	def __init__(self, x, y, direction):
 		pygame.sprite.Sprite.__init__(self)
-		self.timer = 38
+		self.timer = 65
 		self.vel_y = -11
 		self.speed = 7
 		self.image = grenade_img
@@ -245,6 +240,34 @@ class Expl(pygame.sprite.Sprite):
 				self.image = self.images[self.frame_index]
 
 
+class Button():
+	def __init__(self,x, y, image, scale):
+		width = image.get_width()
+		height = image.get_height()
+		self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+		self.rect = self.image.get_rect()
+		self.rect.topleft = (x, y)
+		self.clicked = False
+
+	def draw(self, surface):
+		action = False
+
+		pos = pygame.mouse.get_pos()
+
+		if self.rect.collidepoint(pos):
+			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+				action = True
+				self.clicked = True
+
+		if pygame.mouse.get_pressed()[0] == 0:
+			self.clicked = False
+
+		surface.blit(self.image, (self.rect.x, self.rect.y))
+
+		return action
+
+start_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 - 150, start_b, 6)
+exit_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 + 50, exit_b, 6)
 
 enemys_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
@@ -262,86 +285,108 @@ while run:
 
 	clock.tick(FPS)
 
-	draw_bg()
-	draw_text(f'HEALTH', font, (0, 0, 0), 843, 15)
 
-	if player.health > 75:
-		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar4.png").convert_alpha()
-		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-		screen.blit(img_bar_health, (670, 23))
-	if player.health <= 75 and player.health > 40:
-		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar3.png").convert_alpha()
-		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-		screen.blit(img_bar_health, (670, 23))
-	if player.health <= 40 and player.health > 10:
-		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar2.png").convert_alpha()
-		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-		screen.blit(img_bar_health, (670, 23))
-	if player.health <= 10 and player.health > 0:
-		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar1.png").convert_alpha()
-		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-		screen.blit(img_bar_health, (670, 23))
-	if player.health == 0:
-		img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar0.png").convert_alpha()
-		img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-		screen.blit(img_bar_health, (670, 23))
-	
-	draw_text(f'AMMO', font, (0, 0, 0), 523, 15)
-	if player.ammo > 15:
-		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo5.png").convert_alpha()
-		img_bar_ammo  = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	if player.ammo <= 15 and player.ammo > 10:
-		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo4.png").convert_alpha()
-		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	if player.ammo <= 10 and player.ammo > 5:
-		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo3.png").convert_alpha()
-		img_bar_ammo = pygame.transform.scale(img_bar_ammo, (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo .get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	if player.ammo <= 5 and player.ammo > 0:
-		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo2.png").convert_alpha()
-		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	if player.ammo == 1:
-		img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo1.png").convert_alpha()
-		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	if player.ammo == 0:
-		img_bar_ammo= pygame.image.load("project-VAK/img/gui/ammo0.png").convert_alpha()
-		img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-		screen.blit(img_bar_ammo, (440, 25))
-	
+	if start_game is False:
+		back_menu = pygame.image.load("project-VAK/img/gui/menu.png")
+		back_menu = pygame.transform.scale(back_menu, (SCREEN_WIDTH, SCREEN_HEIGHT))
+		screen.blit(back_menu, (0,0))
+		if start_button.draw(screen):
+			start_game = True
+		if exit_button.draw(screen):
+			run = False
+		draw_text('SPACE-V', font_big , (255,255,255), 250, 30)
+		
+		pass
+	else:
+		draw_bg()
+		draw_text(f'HEALTH', font, (0, 0, 0), 843, 15)
 
+		if player.health > 75:
+			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar4.png").convert_alpha()
+			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+			screen.blit(img_bar_health, (670, 23))
+		if player.health <= 75 and player.health > 40:
+			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar3.png").convert_alpha()
+			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+			screen.blit(img_bar_health, (670, 23))
+		if player.health <= 40 and player.health > 10:
+			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar2.png").convert_alpha()
+			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+			screen.blit(img_bar_health, (670, 23))
+		if player.health <= 10 and player.health > 0:
+			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar1.png").convert_alpha()
+			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+			screen.blit(img_bar_health, (670, 23))
+		if player.health == 0:
+			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar0.png").convert_alpha()
+			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
+			screen.blit(img_bar_health, (670, 23))
+		
+		draw_text(f'AMMO', font, (0, 0, 0), 523, 15)
+		if player.ammo > 15:
+			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo5.png").convert_alpha()
+			img_bar_ammo  = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		if player.ammo <= 15 and player.ammo > 10:
+			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo4.png").convert_alpha()
+			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		if player.ammo <= 10 and player.ammo > 5:
+			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo3.png").convert_alpha()
+			img_bar_ammo = pygame.transform.scale(img_bar_ammo, (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo .get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		if player.ammo <= 5 and player.ammo > 0:
+			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo2.png").convert_alpha()
+			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		if player.ammo == 1:
+			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo1.png").convert_alpha()
+			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		if player.ammo == 0:
+			img_bar_ammo= pygame.image.load("project-VAK/img/gui/ammo0.png").convert_alpha()
+			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
+			screen.blit(img_bar_ammo, (440, 25))
+		
 
-	player.update()
-	player.draw()
-	for enemy in enemys_group:
-		enemy.update()
-		enemy.draw()
+		player.update()
+		player.draw()
+		if player.alive is True:
+			for enemy in enemys_group:
+				enemy.update()
+				enemy.draw()
 
-	bullet_group.update()
-	grenade_group.update()
-	expl_group.update()
-	bullet_group.draw(screen)
-	grenade_group.draw(screen)
-	expl_group.draw(screen)
-	if player.alive:
-		if shoot:
-			player.shoot()
-			shoot = False
-		elif grenade and grenade_thrown == False and player.grenades > 0:
-			grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction)
-			grenade_group.add(grenade)
-			player.grenades -= 1
-			grenade_thrown = True  
-		if player.in_air:
-			player.update_action(2)#2: jump
-		elif moving_left or moving_right:
-			player.update_action(1)#1: run
+			bullet_group.update()
+			grenade_group.update()
+			expl_group.update()
+			bullet_group.draw(screen)
+			grenade_group.draw(screen)
+			expl_group.draw(screen)
+			if player.alive:
+				if shoot:
+					player.shoot()
+					shoot = False
+				elif grenade and grenade_thrown == False and player.grenades > 0:
+					grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction)
+					grenade_group.add(grenade)
+					player.grenades -= 1
+					grenade_thrown = True  
+				if player.in_air:
+					player.update_action(2)
+				elif moving_left or moving_right:
+					player.update_action(1)
+				else:
+					player.update_action(0)
+				player.move(moving_left, moving_right)
 		else:
-			player.update_action(0)#0: idle
-		player.move(moving_left, moving_right)
+			for enemy in enemys_group:
+				enemy.draw()
+			bullet_group.draw(screen)
+			expl_group.update()
+			grenade_group.draw(screen)
+			expl_group.draw(screen)
+			draw_text('YOU LOST', font_big , (255,255,255), 200, 30)
+			
 
 
 	for event in pygame.event.get():
