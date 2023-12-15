@@ -1,423 +1,371 @@
 import pygame
 import os
 
-
 pygame.init()
 
-
-SCREEN_WIDTH = 990
+# Screen
+SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = int(SCREEN_WIDTH * 0.8)
-
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('SPACE-V')
 
-
+# Time
 clock = pygame.time.Clock()
 FPS = 60
+ANIMATION_COOLDOWN = 150
 
+# Game variables
+GRAVITY = 0.8
 
-GRAVITY = 0.4
+# Player's actions
+is_moving_left = False
+is_moving_right = False
+is_moving_down = False
+is_moving_up = False
+is_shooting = False
+is_using_grenade = False
+is_grenade_thrown = False
 
-moving_left = False
-moving_right = False
-shoot = False
-grenade = False
-grenade_thrown = False
-start_game = False
+# Images
+bullet_image = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
+grenade_image = pygame.image.load('project-VAK/img/items/grenade.png').convert_alpha()
 
-start_b = pygame.image.load('project-VAK/img/gui/play_btt.png').convert_alpha()
-exit_b = pygame.image.load('project-VAK/img/gui/exit_btt.png').convert_alpha()
+# Colors
+BACKGROUND_COLOR = (144, 201, 120)
+RED_COLOR = (255, 0, 0)
 
-bullet_img = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
-grenade_img = pygame.image.load('project-VAK/img/items/grenade.png').convert_alpha()
-
-BG = (144, 201, 120)
-RED = (255, 0, 0)
-
+# Fonts
 font = pygame.font.Font("project-VAK/img/gui/ThaleahFat.ttf", 48)
-font_big = pygame.font.Font("project-VAK/img/gui/ThaleahFat.ttf", 158)
+
 
 def draw_text(text, font, text_col, x, y):
-	img = font.render(text, True, text_col)
-	screen.blit(img, (x, y))
+    text_image = font.render(text, True, text_col)
+    screen.blit(text_image, (x, y))
 
-def draw_bg():
-	screen.fill(BG)
-	pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
+def draw_background():
+    screen.fill(BACKGROUND_COLOR)
+    pygame.draw.line(screen, RED_COLOR, (0, 300), (SCREEN_WIDTH, 300))
+
+import math
+
+def get_angle_to_cursor(player_rect):
+    mouseX, mouseY = pygame.mouse.get_pos()
+    delta_x, delta_y = mouseX - player_rect.centerx, mouseY - player_rect.centery
+    angle_rad = math.atan2(delta_y, delta_x)
+
+    # Переводим радианы в градусы
+    angle_deg = math.degrees(angle_rad)
+    print(angle_deg)
+    # Отрицательные углы преобразуем в положительные
+    if angle_deg < 0:
+        angle_deg += 360
+
+    return angle_deg
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, x, y, scale, speed, ammo, grenades):
-		pygame.sprite.Sprite.__init__(self)
-		self.alive = True
-		self.speed = speed
-		self.ammo = ammo
-		self.start_ammo = ammo
-		self.shoot_coldown = 0
-		self.direction = 1
-		self.grenades = grenades 
-		self.health = 100
-		self.health_m = self.health
-		self.vel_y = 0
-		self.jump = False
-		self.in_air = True
-		self.flip = False
-		self.animation_list = []
-		self.frame_index = 0
-		self.action = 0
-		self.update_time = pygame.time.get_ticks()
+    def __init__(self, x, y, scale, speed, ammo, grenades):
+        pygame.sprite.Sprite.__init__(self)
+        self.is_alive = True
+        self.speed = speed
+        self.ammo = ammo
+        self.start_ammo = ammo
+        self.shoot_cooldown = 0
+        self.direction = 1
+        self.grenades = grenades
+        self.health = 100
+        self.max_health = self.health
+        self.v_vel = 0
+        self.is_jumping = False
+        self.in_air = True
+        self.is_flipped = False
+        self.animation_list = []
+        self.frame_index = 0
+        self.action = 0
+        self.update_time = pygame.time.get_ticks()
 
-		animation_types = ['Player-idle', 'player-run', 'Player-Jump', 'Player-Death']
-		for animation in animation_types:
-			temp_list = []
-			num_of_frames = len(os.listdir(f'project-VAK/img/sprites/{animation}'))
-			for i in range(num_of_frames):
-				img = pygame.image.load(f'project-VAK/img/sprites/{animation}/{i}.png').convert_alpha()
-				img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-				temp_list.append(img)
-			self.animation_list.append(temp_list)
-	
-		self.image = self.animation_list[self.action][self.frame_index]
-		self.rect = self.image.get_rect()
-		self.rect.center = (x, y)
+        animation_types = ['Player-idle', 'player-run', 'Player-Death']
+        for animation in animation_types:
+            temp_list = []
+            num_of_frames = len(os.listdir(f'project-VAK/img/sprites/{animation}'))
+            for i in range(num_of_frames):
+                img = pygame.image.load(f'project-VAK/img/sprites/{animation}/{i}.png').convert_alpha()
+                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                temp_list.append(img)
+            self.animation_list.append(temp_list)
 
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
-	def shoot(self):
-			if self.shoot_coldown == 0 and self.ammo > 0:
-				self.shoot_coldown = 20
-				bullet = Bullet(self.rect.centerx + (0.9 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
-				bullet_group.add(bullet)
-				self.ammo -= 1
+    def shoot(self):
+        if self.shoot_cooldown == 0 and self.ammo > 0:
+            self.shoot_cooldown = 20
+            # Get the angle to the cursor
+            angle = get_angle_to_cursor(self.rect)
+            bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player")
+            bullet_group.add(bullet)
+            self.ammo -= 1
 
-	def update(self):
-		self.update_animation()
-		self.check_alive()
-		if self.shoot_coldown != 0:
-			self.shoot_coldown -= 1	
+    def update(self):
+        self.update_animation()
+        self.check_alive()
+        if self.shoot_cooldown != 0:
+            self.shoot_cooldown -= 1
 
-			 
+    def move(self, moving_left, moving_right, moving_down, moving_up):
+        if moving_left and moving_right:
+            dx = 0
+        else:
+            dx = -self.speed if moving_left else self.speed if moving_right else 0
+        
+        self.direction = -1 if moving_left else 1 if moving_right else self.direction
 
-	def move(self, moving_left, moving_right):
-		if moving_left and moving_right:
-			dx = 0
-		else:
-			dx = -self.speed if moving_left else self.speed if moving_right else 0
-
-		self.flip = moving_left
-		self.direction = -1 if moving_left else 1 if moving_right else self.direction
-
-		if self.jump and not self.in_air:
-			self.vel_y, self.jump, self.in_air = -11, False, True
-
-		self.vel_y = min(self.vel_y + GRAVITY, 10)
-		dy = self.vel_y
-		if self.rect.bottom + dy > 300:
-			dy, self.in_air = 300 - self.rect.bottom, False
-
-		self.rect.x += dx
-		self.rect.y += dy
+        if moving_up and moving_down:
+            dy = 0
+        else:
+            dy = self.speed if moving_down else -self.speed if moving_up else 0
 
 
-	def update_animation(self):
-		ANIMATION_COOLDOWN = 150
-		self.image = self.animation_list[self.action][self.frame_index]
-		if pygame.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
-			self.update_time = pygame.time.get_ticks()
-			self.frame_index += 1
-		if self.frame_index >= len(self.animation_list[self.action]):
-			if self.action == 3:
-				self.frame_index = len(self.animation_list[self.action]) - 1
-			else:
-				self.frame_index = 0
+        self.rect.x += dx
+        self.rect.y += dy
 
+    def update_animation(self):
+        self.image = self.animation_list[self.action][self.frame_index]
+        if pygame.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
+            self.update_time = pygame.time.get_ticks()
+            self.frame_index += 1
+        if self.frame_index >= len(self.animation_list[self.action]):
+            if self.action == 2:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.frame_index = 0
 
-	def update_action(self, new_action):
-		if new_action != self.action:
-			self.action = new_action
-			self.frame_index = 0
-			self.update_time = pygame.time.get_ticks()
+    def update_action(self, new_action):
+        if new_action != self.action:
+            self.action = new_action
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
 
-	def check_alive(self):
-		if self.health <= 0:
-			self.health = 0
-			self.speed = 0
-			self.alive = False
-			self.update_action(3)
+    def check_alive(self):
+        if self.health <= 0:
+            self.health = 0
+            self.speed = 0
+            self.is_alive = False
+            self.update_action(2)
 
-	def draw(self):
-		screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
+    def draw(self):
+        if self.direction == -1:
+            screen.blit(pygame.transform.flip(self.image, True, False), self.rect)
+        else:
+            screen.blit(pygame.transform.flip(self.image, False, False), self.rect)
+
 
 class Bullet(pygame.sprite.Sprite):
-	def __init__(self, x, y, direction):
-		pygame.sprite.Sprite.__init__(self)
-		self.speed = 10
-		self.image = bullet_img
-		self.rect = self.image.get_rect()
-		self.rect.center = (x, y)
-		self.direction = direction
-	
-	def update(self):
-		self.rect.x += (self.direction * self.speed)
-		if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
-			self.kill()
+    def __init__(self, x, y, angle, sender):
+        pygame.sprite.Sprite.__init__(self)
+        self.speed = 10
+        self.image = bullet_image
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.angle = angle
+        self.sender = sender
 
-		if pygame.sprite.spritecollide(player, bullet_group, False):
-			if player.alive:
-				player.health -= 20
-				self.kill()
-		for enemy in enemys_group:
-			if pygame.sprite.spritecollide(enemy, bullet_group, False):
-				if enemy.alive:
-					enemy.health -= 25
-					self.kill()
+    def update(self):
+        # Update bullet position based on angle
+        self.rect.x += self.speed * math.cos(math.radians(self.angle))
+        self.rect.y += self.speed * math.sin(math.radians(self.angle))
+
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or \
+           self.rect.bottom < 0 or self.rect.top > SCREEN_HEIGHT:
+            self.kill()
+
+        if pygame.sprite.spritecollide(player, bullet_group, False):
+            if self.sender != "player":
+                if player.is_alive:
+                    player.health -= 20
+                    self.kill()
+        for enemy in enemies_group:
+            if pygame.sprite.spritecollide(enemy, bullet_group, False):
+                if enemy.is_alive:
+                    enemy.health -= 25
+                    self.kill()
+
 
 class Grenade(pygame.sprite.Sprite):
-	def __init__(self, x, y, direction):
-		pygame.sprite.Sprite.__init__(self)
-		self.timer = 65
-		self.vel_y = -11
-		self.speed = 7
-		self.image = grenade_img
-		self.rect = self.image.get_rect()
-		self.rect.center = (x, y)
-		self.direction = direction
-	
-	def update(self):
-		self.vel_y += GRAVITY
-		dx = self.direction * self.speed
-		dy = self.vel_y
+    def __init__(self, x, y, direction):
+        pygame.sprite.Sprite.__init__(self)
+        self.timer = 38
+        self.v_vel = -11
+        self.speed = 7
+        self.image = grenade_image
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.direction = direction
 
-		if self.rect.bottom + dy > 300:
-			dy = 300 - self.rect.bottom
-			self.speed = 0
+    def update(self):
+        self.v_vel += GRAVITY
+        dx = self.direction * self.speed
+        dy = self.v_vel
 
-		if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
-			self.direction *= -1
-			dx = self.direction * self.speed
+        if self.rect.bottom + dy > 300:
+            dy = 300 - self.rect.bottom
+            self.speed = 0
 
-		self.rect.x += dx
-		self.rect.y += dy
+        if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
+            self.direction *= -1
+            dx = self.direction * self.speed
 
-		self.timer -= 1
-		if self.timer <= 0:
-			self.kill()
-			explosi = Expl(self.rect.x, self.rect.y, 6)
-			expl_group.add(explosi)
+        self.rect.x += dx
+        self.rect.y += dy
 
-			if abs(self.rect.centerx - player.rect.centerx) < 90 and abs(self.rect.centery - player.rect.centery) < 90:
-				player.health -= 100
-			for i in enemys_group:
-				if abs(self.rect.centerx - i.rect.centerx) < 90 and abs(self.rect.centery - i.rect.centery) < 90:
-					i.health -= 100
+        self.timer -= 1
+        if self.timer <= 0:
+            self.kill()
+            explosion = Explosion(self.rect.x, self.rect.y, 6)
+            explosion_group.add(explosion)
 
-
-
-
-class Expl(pygame.sprite.Sprite):
-	def __init__(self, x, y, scale):
-		pygame.sprite.Sprite.__init__(self)
-		self.images = list()
-		for i in range(1, 9):
-			img = pygame.image.load(f'project-VAK/img/exp/explosion{i}.png').convert_alpha()
-			img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-			self.images.append(img)
-		self.frame_index = 0
-		self.image = self.images[self.frame_index]
-		self.rect = self.image.get_rect()
-		self.rect.center = (x, y)
-		self.counter = 0
-
-	def update(self):
-		speed_of_exp = 5
-		self.counter += 1
-
-		if self.counter >= speed_of_exp:
-			self.counter = 0
-			self.frame_index += 1
-			if self.frame_index >= len(self.images):
-				self.kill()
-			else:
-				self.image = self.images[self.frame_index]
+            if abs(self.rect.centerx - player.rect.centerx) < 90 and abs(
+                    self.rect.centery - player.rect.centery) < 90:
+                player.health -= 100
+            for enemy in enemies_group:
+                if abs(self.rect.centerx - enemy.rect.centerx) < 90 and abs(
+                        self.rect.centery - enemy.rect.centery) < 90:
+                    enemy.health -= 100
 
 
-class Button():
-	def __init__(self,x, y, image, scale):
-		width = image.get_width()
-		height = image.get_height()
-		self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-		self.rect = self.image.get_rect()
-		self.rect.topleft = (x, y)
-		self.clicked = False
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, x, y, scale):
+        pygame.sprite.Sprite.__init__(self)
+        self.images = list()
+        for i in range(1, 9):
+            img = pygame.image.load(f'project-VAK/img/exp/explosion{i}.png').convert_alpha()
+            img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+            self.images.append(img)
+        self.frame_index = 0
+        self.image = self.images[self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.counter = 0
 
-	def draw(self, surface):
-		action = False
+    def update(self):
+        speed_of_explosion = 5
+        self.counter += 1
 
-		pos = pygame.mouse.get_pos()
+        if self.counter >= speed_of_explosion:
+            self.counter = 0
+            self.frame_index += 1
+            if self.frame_index >= len(self.images):
+                self.kill()
+            else:
+                self.image = self.images[self.frame_index]
 
-		if self.rect.collidepoint(pos):
-			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-				action = True
-				self.clicked = True
 
-		if pygame.mouse.get_pressed()[0] == 0:
-			self.clicked = False
-
-		surface.blit(self.image, (self.rect.x, self.rect.y))
-
-		return action
-
-start_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 - 150, start_b, 6)
-exit_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 + 50, exit_b, 6)
-
-enemys_group = pygame.sprite.Group()
+enemies_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 grenade_group = pygame.sprite.Group()
-expl_group = pygame.sprite.Group()
-
+explosion_group = pygame.sprite.Group()
 
 player = Player(200, 200, 3, 5, 20, 5)
 enemy = Player(400, 200, 3, 5, 20, 0)
 enemy1 = Player(400, 400, 3, 5, 20, 0)
-enemys_group.add(enemy)
-enemys_group.add(enemy1)
+enemies_group.add(enemy)
+enemies_group.add(enemy1)
 run = True
+
+
+def draw_status_bar(player_value, bars, pos_x, pos_y):
+    for limit, img in sorted(bars.items(), reverse=True):
+        if player_value > limit:
+            img_bar = pygame.image.load(f"project-VAK/img/gui/{img}").convert_alpha()
+            img_bar = pygame.transform.scale(img_bar, (int(img_bar.get_width() * 4), int(img_bar.get_height() * 4)))
+            screen.blit(img_bar, (pos_x, pos_y))
+            break
+
+
 while run:
 
-	clock.tick(FPS)
+    clock.tick(FPS)
 
+    draw_background()
+    health_bars = {75: "health_bar4.png", 40: "health_bar3.png", 10: "health_bar2.png", 0: "health_bar1.png",
+                   -1: "health_bar0.png"}
+    ammo_bars = {15: "ammo5.png", 10: "ammo4.png", 5: "ammo3.png", 1: "ammo2.png", 0: "ammo1.png", -1: "ammo0.png"}
 
-	if start_game is False:
-		back_menu = pygame.image.load("project-VAK/img/gui/menu.png")
-		back_menu = pygame.transform.scale(back_menu, (SCREEN_WIDTH, SCREEN_HEIGHT))
-		screen.blit(back_menu, (0,0))
-		if start_button.draw(screen):
-			start_game = True
-		if exit_button.draw(screen):
-			run = False
-		draw_text('SPACE-V', font_big , (255,255,255), 250, 30)
-		
-		pass
-	else:
-		draw_bg()
-		draw_text(f'HEALTH', font, (0, 0, 0), 843, 15)
+    draw_text(f'HEALTH', font, (0, 0, 0), 843, 15)
+    draw_status_bar(player.health, health_bars, 670, 23)
 
-		if player.health > 75:
-			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar4.png").convert_alpha()
-			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-			screen.blit(img_bar_health, (670, 23))
-		if player.health <= 75 and player.health > 40:
-			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar3.png").convert_alpha()
-			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-			screen.blit(img_bar_health, (670, 23))
-		if player.health <= 40 and player.health > 10:
-			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar2.png").convert_alpha()
-			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-			screen.blit(img_bar_health, (670, 23))
-		if player.health <= 10 and player.health > 0:
-			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar1.png").convert_alpha()
-			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-			screen.blit(img_bar_health, (670, 23))
-		if player.health == 0:
-			img_bar_health = pygame.image.load("project-VAK/img/gui/health_bar0.png").convert_alpha()
-			img_bar_health  = pygame.transform.scale(img_bar_health, (int(img_bar_health.get_width() * 4), int(img_bar_health.get_height() * 4)))
-			screen.blit(img_bar_health, (670, 23))
-		
-		draw_text(f'AMMO', font, (0, 0, 0), 523, 15)
-		if player.ammo > 15:
-			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo5.png").convert_alpha()
-			img_bar_ammo  = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		if player.ammo <= 15 and player.ammo > 10:
-			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo4.png").convert_alpha()
-			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		if player.ammo <= 10 and player.ammo > 5:
-			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo3.png").convert_alpha()
-			img_bar_ammo = pygame.transform.scale(img_bar_ammo, (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo .get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		if player.ammo <= 5 and player.ammo > 0:
-			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo2.png").convert_alpha()
-			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo .get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		if player.ammo == 1:
-			img_bar_ammo = pygame.image.load("project-VAK/img/gui/ammo1.png").convert_alpha()
-			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		if player.ammo == 0:
-			img_bar_ammo= pygame.image.load("project-VAK/img/gui/ammo0.png").convert_alpha()
-			img_bar_ammo = pygame.transform.scale(img_bar_ammo , (int(img_bar_ammo.get_width() * 4), int(img_bar_ammo.get_height() * 4)))
-			screen.blit(img_bar_ammo, (440, 25))
-		
+    draw_text(f'AMMO', font, (0, 0, 0), 523, 15)
+    draw_status_bar(player.ammo, ammo_bars, 440, 25)
 
-		player.update()
-		player.draw()
-		if player.alive is True:
-			for enemy in enemys_group:
-				enemy.update()
-				enemy.draw()
+    player.update()
+    player.draw()
 
-			bullet_group.update()
-			grenade_group.update()
-			expl_group.update()
-			bullet_group.draw(screen)
-			grenade_group.draw(screen)
-			expl_group.draw(screen)
-			if player.alive:
-				if shoot:
-					player.shoot()
-					shoot = False
-				elif grenade and grenade_thrown == False and player.grenades > 0:
-					grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction)
-					grenade_group.add(grenade)
-					player.grenades -= 1
-					grenade_thrown = True  
-				if player.in_air:
-					player.update_action(2)
-				elif moving_left or moving_right:
-					player.update_action(1)
-				else:
-					player.update_action(0)
-				player.move(moving_left, moving_right)
-		else:
-			for enemy in enemys_group:
-				enemy.draw()
-			bullet_group.draw(screen)
-			expl_group.update()
-			grenade_group.draw(screen)
-			expl_group.draw(screen)
-			draw_text('YOU LOST', font_big , (255,255,255), 200, 30)
-			
+    for enemy in enemies_group:
+        enemy.update()
+        enemy.draw()
 
+    bullet_group.update()
+    grenade_group.update()
+    explosion_group.update()
+    bullet_group.draw(screen)
+    grenade_group.draw(screen)
+    explosion_group.draw(screen)
+    if player.is_alive:
+        if is_shooting:
+            player.shoot()
+            is_shooting = False
+        elif is_using_grenade and not is_grenade_thrown and player.grenades > 0:
+            is_using_grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction),
+                                       player.rect.top,
+                                       player.direction)
+            grenade_group.add(is_using_grenade)
+            player.grenades -= 1
+            is_grenade_thrown = True
+        if is_moving_left or is_moving_right or is_moving_down or is_moving_up:
+            if (is_moving_left and is_moving_right) and not is_moving_up and not is_moving_down:
+                player.update_action(0)
+            elif (is_moving_down and is_moving_up) and not is_moving_right and not is_moving_left:
+                player.update_action(0)
+            else:
+                player.update_action(1)
+        else:
+            player.update_action(0)
+        player.move(is_moving_left, is_moving_right, is_moving_down, is_moving_up)
 
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			run = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_a:
-				moving_left = True
-			if event.key == pygame.K_d:
-				moving_right = True
-			if event.key == pygame.K_w and player.alive:
-				player.jump = True
-			if event.key == pygame.K_ESCAPE:
-				run = False
-			if event.key == pygame.K_q:
-				grenade = True
-			if event.key == pygame.K_SPACE:
-				shoot = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                is_moving_left = True
+            if event.key == pygame.K_d:
+                is_moving_right = True
+            if event.key == pygame.K_w:
+                is_moving_up = True
+            if event.key == pygame.K_s:
+                is_moving_down = True
+            if event.key == pygame.K_ESCAPE:
+                run = False
+            if event.key == pygame.K_q:
+                is_using_grenade = True
+            if event.key == pygame.K_SPACE:
+                is_shooting = True
 
-		if event.type == pygame.KEYUP:
-			if event.key == pygame.K_a:
-				moving_left = False
-			if event.key == pygame.K_d:
-				moving_right = False
-			if event.key == pygame.K_q:
-				grenade = False
-				grenade_thrown = False
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_a:
+                is_moving_left = False
+            if event.key == pygame.K_d:
+                is_moving_right = False
+            if event.key == pygame.K_q:
+                is_using_grenade = False
+                is_grenade_thrown = False
+            if event.key == pygame.K_w:
+                is_moving_up = False
+            if event.key == pygame.K_s:
+                is_moving_down = False
 
-
-
-	pygame.display.update()
+    pygame.display.update()
 
 pygame.quit()
