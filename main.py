@@ -358,28 +358,24 @@ class Button:
 
 
 
-class ScreenFade():
-    def __init__(self, direction, clr, speed):
-        self.direc = direction
-        self.clr = clr
+class ScreenFade:
+    def __init__(self, direction, color, speed):
+        self.direction = direction
+        self.color = color
         self.speed = speed
         self.fade_counter = 0
 
     def fade(self):
-        fade_complete = False
         self.fade_counter += self.speed
-        if self.direc == 1:
-            pygame.draw.rect(screen, self.clr, (0 - self.fade_counter, 0, SCREEN_WIDTH // 2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
-        if self.direc == 2:
-            pygame.draw.rect(screen, self.clr, (0, 0, SCREEN_WIDTH, 0 + self.fade_counter))
-        if self.direc == 3:
-            pygame.draw.rect(screen, self.clr, (0 - self.fade_counter * 7, 0, SCREEN_WIDTH // 2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter * 7, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
-        if self.fade_counter > SCREEN_WIDTH - 500:
-            fade_complete = True
+        if self.direction in [1, 3]:
+            offset = self.fade_counter * 7 if self.direction == 3 else self.fade_counter
+            pygame.draw.rect(screen, self.color, (0 - offset, 0, SCREEN_WIDTH // 2, SCREEN_HEIGHT + 300))
+            pygame.draw.rect(screen, self.color, (768 + offset, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
+        elif self.direction == 2:
+            pygame.draw.rect(screen, self.color, (0, 0, SCREEN_WIDTH, self.fade_counter))
 
-        return fade_complete
+        return self.fade_counter > SCREEN_WIDTH - 500
+
 
 
 intro_fade = ScreenFade(1, (0, 0, 0), 4)
