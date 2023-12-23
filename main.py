@@ -151,24 +151,17 @@ class Bullet(pygame.sprite.Sprite):
         self.sender = sender
 
     def update(self):
-        # Update bullet position based on angle
         self.rect.x += self.speed * math.cos(math.radians(self.angle))
         self.rect.y += self.speed * math.sin(math.radians(self.angle))
 
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or \
-                self.rect.bottom < 0 or self.rect.top > SCREEN_HEIGHT:
+        if not(0 < self.rect.right < SCREEN_WIDTH and 0 < self.rect.bottom < SCREEN_HEIGHT):
             self.kill()
 
-        if pygame.sprite.spritecollide(player, bullet_group, False):
-            if self.sender != "player":
-                if player.is_alive:
-                    player.health -= 20
-                    self.kill()
-        for enemy in enemies_group:
-            if pygame.sprite.spritecollide(enemy, bullet_group, False):
-                if enemy.is_alive:
-                    enemy.health -= 25
-                    self.kill()
+        if pygame.sprite.spritecollide(player, bullet_group, False) and self.sender != "player" and player.is_alive:
+            player.health -= 20
+            self.kill()
+
+        [self.kill() for enemy in enemies_group if pygame.sprite.spritecollide(enemy, bullet_group, False) and enemy.is_alive and (lambda: enemy.health - 25)]
 
 
 class Grenade(pygame.sprite.Sprite):
