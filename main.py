@@ -142,7 +142,7 @@ class Player(pygame.sprite.Sprite):
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, angle, sender):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.speed = 10
         self.image = bullet_image
         self.rect = self.image.get_rect()
@@ -334,40 +334,28 @@ def draw_status_bar(player_value, bars, pos_x, pos_y):
 
 class Button:
     def __init__(self, x, y, image, scale, image_sel, image_press=None, sound_make=True):
-        self.width = image.get_width()
-        self.height = image.get_height()
         self.scale = scale
-        self.image = pygame.transform.scale(
-            image, (int(self.width * self.scale), int(self.height * self.scale))
-        )
-        self.image_press = image_press
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-        self.clicked = False
-        self.image_sel = image_sel
+        self.image = pygame.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))
+        self.image_sel = pygame.transform.scale(image_sel, (int(image_sel.get_width() * scale), int(image_sel.get_height() * scale)))
+        self.image_press = pygame.transform.scale(image_press, (int(image_press.get_width() * scale), int(image_press.get_height() * scale))) if image_press else None
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.sound_make = sound_make
+        self.clicked = False
 
     def draw(self, surface):
-        self.clicked = False
-        action = False
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
-            self.image = pygame.transform.scale(
-                self.image_sel, (int(self.width * self.scale), int(self.height * self.scale))
-            )
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                action = True
-                if self.image_press != None:
-                    self.image = pygame.transform.scale(
-                        self.image_press, (int(self.width * self.scale), int(self.height * self.scale))
-                    )
-                if self.sound_make == True:
+            self.image = self.image_sel
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+                self.clicked = True
+                if self.image_press:
+                    self.image = self.image_press
+                if self.sound_make:
                     click_sound.stop()
                     click_sound.play()
+        surface.blit(self.image, self.rect)
+        return self.clicked
 
-                self.clicked = True
-        surface.blit(self.image, (self.rect.x, self.rect.y))
-        return action
 
 
 class ScreenFade():
