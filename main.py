@@ -83,11 +83,8 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self):
         if self.shoot_cooldown == 0 and self.ammo > 0:
-            self.shoot_cooldown = 20
-            # Get the angle to the cursor
-            angle = get_angle_to_cursor(self.rect)
-            bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player")
-            bullet_group.add(bullet)
+            self.shoot_cooldown, angle = 20, get_angle_to_cursor(self.rect)
+            bullet_group.add(Bullet(self.rect.centerx, self.rect.centery, angle, "player"))
             self.ammo -= 1
 
     def update(self):
