@@ -41,7 +41,6 @@ def get_angle_to_cursor(player_rect):
     mouseX, mouseY = pygame.mouse.get_pos()
     delta_x, delta_y = mouseX - player_rect.centerx, mouseY - player_rect.centery
     angle_deg = (math.degrees(math.atan2(delta_y, delta_x)) + 360) % 360
-    print(angle_deg)
     return angle_deg
 
 
@@ -377,7 +376,7 @@ class ScreenFade:
         return self.fade_counter > SCREEN_WIDTH - 500
 
 
-
+#### NEED TO REWRITE
 intro_fade = ScreenFade(1, (0, 0, 0), 4)
 death_fade = ScreenFade(2, (0, 0, 0), 4)
 shop_fade = ScreenFade(3, (0, 0, 0), 4)
