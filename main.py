@@ -408,109 +408,99 @@ flag_shop = 2
 gun_which = 1
 
 while run:
-
     if current_window_selected == "main_menu":
         color_menu()
-        start_im = pygame.image.load("project-VAK/img/gui/button_start.png").convert_alpha()
-        start_im_s = pygame.image.load("project-VAK/img/gui/button_start_select.png").convert_alpha()
-        option_im = pygame.image.load("project-VAK/img/gui/button_options.png").convert_alpha()
-        option_im_s = pygame.image.load("project-VAK/img/gui/button_options_select.png").convert_alpha()
-        credit_im = pygame.image.load("project-VAK/img/gui/button_credits.png").convert_alpha()
-        credit_im_s = pygame.image.load("project-VAK/img/gui/button_credits_select.png").convert_alpha()
-        exit_im = pygame.image.load("project-VAK/img/gui/button_exit.png").convert_alpha()
-        exit_im_s = pygame.image.load("project-VAK/img/gui/button_exit_select.png").convert_alpha()
+        button_images = {
+            "start": {
+                "default": pygame.image.load("project-VAK/img/gui/button_start.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_start_select.png").convert_alpha()
+            },
+            "options": {
+                "default": pygame.image.load("project-VAK/img/gui/button_options.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_options_select.png").convert_alpha()
+            },
+            "credits": {
+                "default": pygame.image.load("project-VAK/img/gui/button_credits.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_credits_select.png").convert_alpha()
+            },
+            "exit": {
+                "default": pygame.image.load("project-VAK/img/gui/button_exit.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_exit_select.png").convert_alpha()
+            }
+        }
 
-        if ship_level == 1:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (680, y_for_ship_pos + 180))
-        if ship_level == 2:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship2.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (680, y_for_ship_pos))
-        if ship_level == 3:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship3.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 4:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship4.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 5:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship5.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 6:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship6.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
+        ship_images = {
+            1: pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha(),
+            2: pygame.image.load("project-VAK/img/gui/ships/ship2.png").convert_alpha(),
+            3: pygame.image.load("project-VAK/img/gui/ships/ship3.png").convert_alpha(),
+            4: pygame.image.load("project-VAK/img/gui/ships/ship4.png").convert_alpha(),
+            5: pygame.image.load("project-VAK/img/gui/ships/ship5.png").convert_alpha(),
+            6: pygame.image.load("project-VAK/img/gui/ships/ship6.png").convert_alpha()
+        }
+
+        ship_im = pygame.transform.scale(ship_images[ship_level], (
+        int(ship_images[ship_level].get_width() * 5), int(ship_images[ship_level].get_height() * 5)))
+        screen.blit(ship_im,
+                    (680 if ship_level == 1 else 580, y_for_ship_pos + 180 if ship_level == 1 else y_for_ship_pos))
 
         draw_text("SPACE V", font_2, (255, 255, 255), 10, 90)
         draw_text("ver 0.6", font, (155, 55, 95), 1440, 860)
         draw_text("ver 0.6", font, (90, 90, 90), 1440, 858)
 
         y_for_ship_pos += floating_ship_speed
-        if y_for_ship_pos >= 320:
-            floating_ship_speed = -floating_ship_speed
-        if y_for_ship_pos <= 290:
+        if y_for_ship_pos >= 320 or y_for_ship_pos <= 290:
             floating_ship_speed = -floating_ship_speed
 
-        credit_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 210, credit_im, 7, credit_im_s)
-        start_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 - 10, start_im, 7, start_im_s)
-        option_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 100, option_im, 7, option_im_s)
-        exit_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 320, exit_im, 7, exit_im_s)
+        buttons = {
+            "credit": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 210, button_images["credits"]["default"], 7,
+                             button_images["credits"]["selected"]),
+            "start": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 - 10, button_images["start"]["default"], 7,
+                            button_images["start"]["selected"]),
+            "option": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 100, button_images["options"]["default"], 7,
+                             button_images["options"]["selected"]),
+            "exit": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 320, button_images["exit"]["default"], 7,
+                           button_images["exit"]["selected"])
+        }
 
-        if credit_button.draw(screen):
+        if buttons["credit"].draw(screen):
             current_window_selected = "credits"
-        if start_button.draw(screen):
+        if buttons["start"].draw(screen):
             city_noise.play(-1)
             start_intro = True
             current_window_selected = "home"
-        if option_button.draw(screen):
+        if buttons["option"].draw(screen):
             current_window_selected = "options"
-        if exit_button.draw(screen):
+        if buttons["exit"].draw(screen):
             run = False
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
 
     if current_window_selected == "home":
         page = 1
         enter_shop = None
         clock.tick(FPS)
+
         back_ground_for_home = pygame.image.load("project-VAK/img/gui/menu_in_play.png").convert_alpha()
         back_ground_for_home = pygame.transform.scale(back_ground_for_home, (
         int(back_ground_for_home.get_width() * 4), int(back_ground_for_home.get_height() * 5.1)))
         screen.blit(back_ground_for_home, (0, 12))
         screen.blit(back_ground_for_home, (0, -80))
-        if ship_level == 1:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4), int(ship_im.get_height() * 4)))
-            screen.blit(ship_im, (460, y_for_ship_pos_for_menu))
-        if ship_level == 2:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship2.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.2), int(ship_im.get_height() * 4.2)))
-            screen.blit(ship_im, (330, y_for_ship_pos_for_menu - 130))
-        if ship_level == 3:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship3.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.4), int(ship_im.get_height() * 4.4)))
-            screen.blit(ship_im, (300, y_for_ship_pos_for_menu - 150))
-        if ship_level == 4:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship4.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.4), int(ship_im.get_height() * 4.4)))
-            screen.blit(ship_im, (310, y_for_ship_pos_for_menu - 170))
-        if ship_level == 5:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship5.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.6), int(ship_im.get_height() * 4.6)))
-            screen.blit(ship_im, (310, y_for_ship_pos_for_menu - 230))
-        if ship_level == 6:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship6.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.5), int(ship_im.get_height() * 4.5)))
-            screen.blit(ship_im, (290, y_for_ship_pos_for_menu - 200))
+
+        ship_images = [
+            "project-VAK/img/gui/ships/ship1.png",
+            "project-VAK/img/gui/ships/ship2.png",
+            "project-VAK/img/gui/ships/ship3.png",
+            "project-VAK/img/gui/ships/ship4.png",
+            "project-VAK/img/gui/ships/ship5.png",
+            "project-VAK/img/gui/ships/ship6.png"
+        ]
+        ship_im = pygame.image.load(ship_images[ship_level - 1]).convert_alpha()
+        ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * (4 + 0.2 * (ship_level - 1))),
+                                                   int(ship_im.get_height() * (4 + 0.2 * (ship_level - 1)))))
+        screen.blit(ship_im, (460 - 130 * (ship_level - 1), y_for_ship_pos_for_menu - 20 * (ship_level - 1)))
+
         player_for_menu.update()
         player_for_menu.draw()
 
@@ -520,20 +510,19 @@ while run:
         if y_for_ship_pos_for_menu <= 535:
             floating_ship_speed = -floating_ship_speed
 
-        if player_for_menu.rect.x >= 500 and player_for_menu.rect.x <= 590:
-            draw_text("PRESS SPACE TO FLY INTO THE SPACE", font_4, (255, 255, 255), 20, 12)
-        if player_for_menu.rect.x >= 5 and player_for_menu.rect.x <= 95:
-            draw_text("PRESS SPACE TO ENTER THE WEAPONS STORE", font_4, (255, 255, 255), 20, 12)
-            enter_shop = "weapons"
-        if player_for_menu.rect.x >= 850 and player_for_menu.rect.x <= 1170:
-            draw_text("PRESS SPACE TO ENTER THE FOOD SHOP", font_4, (255, 255, 255), 20, 12)
-            enter_shop = "food"
-        if player_for_menu.rect.x >= 1233 and player_for_menu.rect.x <= 1310:
-            draw_text("PRESS SPACE TO ENTER THE 'JUNK' STORE", font_4, (255, 255, 255), 20, 12)
-            enter_shop = "junk"
-        if player_for_menu.rect.x >= 1400 and player_for_menu.rect.x <= 1493:
-            draw_text("PRESS SPACE TO ENTER THE SKILL STORE", font_4, (255, 255, 255), 20, 12)
-            enter_shop = "skill"
+        text_prompts = [
+            ("PRESS SPACE TO FLY INTO THE SPACE", 500, 590),
+            ("PRESS SPACE TO ENTER THE WEAPONS STORE", 5, 95),
+            ("PRESS SPACE TO ENTER THE FOOD SHOP", 850, 1170),
+            ("PRESS SPACE TO ENTER THE 'JUNK' STORE", 1233, 1310),
+            ("PRESS SPACE TO ENTER THE SKILL STORE", 1400, 1493)
+        ]
+        for prompt, x_start, x_end in text_prompts:
+            if player_for_menu.rect.x >= x_start and player_for_menu.rect.x <= x_end:
+                draw_text(prompt, font_4, (255, 255, 255), 20, 12)
+                if prompt.startswith("PRESS SPACE TO ENTER"):
+                    enter_shop = prompt.split()[-2].lower()
+
         arrow = pygame.image.load("project-VAK/img/gui/strelka.png").convert_alpha()
         arrow = pygame.transform.scale(arrow, (int(arrow.get_width() * 6), int(arrow.get_height() * 6)))
         screen.blit(arrow, (70, arrow_pos))
@@ -546,7 +535,8 @@ while run:
             floating_arrow_speed = -floating_arrow_speed
         if arrow_pos <= 832:
             floating_arrow_speed = -floating_arrow_speed
-        if start_intro == True:
+
+        if start_intro:
             if flag_shop != 1:
                 if intro_fade.fade():
                     start_intro = False
@@ -558,9 +548,8 @@ while run:
 
         if player_for_menu.is_alive:
             if is_moving_left or is_moving_right or is_moving_down or is_moving_up:
-                if (is_moving_left and is_moving_right) and not is_moving_up and not is_moving_down:
-                    player_for_menu.update_action(0)
-                elif (is_moving_down and is_moving_up) and not is_moving_right and not is_moving_left:
+                if (is_moving_left and is_moving_right and not is_moving_up and not is_moving_down) or (
+                        is_moving_down and is_moving_up and not is_moving_right and not is_moving_left):
                     player_for_menu.update_action(0)
                 else:
                     player_for_menu.update_action(1)
@@ -579,13 +568,12 @@ while run:
                     is_moving_right = True
                 if event.key == pygame.K_ESCAPE:
                     run = False
-                if event.key == pygame.K_SPACE:
-                    if enter_shop != None:
-                        start_intro = True
-                        intro_fade.fade_counter = 0
-                        shop_fade.fade_counter = 0
-                        current_window_selected = enter_shop
-                        city_noise.stop()
+                if event.key == pygame.K_SPACE and enter_shop is not None:
+                    start_intro = True
+                    intro_fade.fade_counter = 0
+                    shop_fade.fade_counter = 0
+                    current_window_selected = enter_shop
+                    city_noise.stop()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     is_moving_left = False
