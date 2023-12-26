@@ -678,7 +678,7 @@ while run:
                         page = 3
                         gun_which = i + 1
 
-
+            #
             button_right_im = pygame.image.load("project-VAK/img/gui/button_right.png").convert_alpha()
             button_right_im_press = pygame.image.load("project-VAK/img/gui/button_right_press.png").convert_alpha()
             button_right = Button(1020, 700, button_right_im, 7, button_right_im, button_right_im_press)
@@ -686,39 +686,22 @@ while run:
             if button_right.draw(screen):
                 page = 2
 
-            for i in range(6):
+            for i in range(24):
                 gun = pygame.image.load(f"project-VAK/img/gui/guns/{i + 1}.png").convert_alpha()
                 gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i > 0:
-                    screen.blit(gun, (10 + move_for_guns * i - 25, 30))
+                if i < 6:
+                    x = 10 + move_for_guns * i - 25 if i > 0 else 10 + move_for_guns * i
+                    screen.blit(gun, (x, 30))
+                elif i < 12:
+                    x = 10 + move_for_guns * (i - 6) + 50 if i != 7 and i != 9 and i != 11 else 10 + move_for_guns * (i - 6)
+                    y = 245 if i != 10 else 265
+                    screen.blit(gun, (x, y))
+                elif i < 18:
+                    screen.blit(gun, (10 + move_for_guns * (i - 12), 445))
                 else:
-                    screen.blit(gun, (10 + move_for_guns * i , 30))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{6 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i > 1 and i != 2 and i != 4:
-                    screen.blit(gun, (10 + move_for_guns * i + 50, 245))
-                elif i == 2:
-                    screen.blit(gun, (10 + move_for_guns * i, 245))
-                elif i == 4:
-                    screen.blit(gun, (10 + move_for_guns * i + 70, 265))
-                else:
-                    screen.blit(gun, (10 + move_for_guns * i, 230))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{12 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                screen.blit(gun, (10 + move_for_guns * i, 445))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{18 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i == 0:
-                    screen.blit(gun, (10 + move_for_guns * i, 685))
-                elif i == 4:
-                    screen.blit(gun, (10 + move_for_guns * i, 685))
-                elif i == 1:
-                    screen.blit(gun, (10 + move_for_guns * i, 675))
-                else:
-                    screen.blit(gun, (10 + move_for_guns * i, 655))
+                    y = 685 if i == 18 or i == 22 else 675 if i == 19 else 655
+                    screen.blit(gun, (10 + move_for_guns * (i - 18), y))
+
 
         if page == 2:
             for i in range(len(guns_player_have)):
