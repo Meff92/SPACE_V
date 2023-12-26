@@ -15,7 +15,7 @@ SCREEN_HEIGHT_19 = 864
 
 print(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1536,864),pygame.FULLSCREEN)
 pygame.display.set_caption('SPACE-V')
 
 # Time
