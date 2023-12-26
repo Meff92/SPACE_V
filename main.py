@@ -10,11 +10,12 @@ pygame.init()
 info = pygame.display.Info()
 SCREEN_WIDTH = 1536
 SCREEN_HEIGHT = 864
-
+SCREEN_WIDTH_19 = 1980
+SCREEN_HEIGHT_19 = 864
 
 print(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-screen = pygame.display.set_mode((1536, 864),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1536,864),pygame.FULLSCREEN)
 pygame.display.set_caption('SPACE-V')
 
 # Time
@@ -65,7 +66,7 @@ def get_angle_to_cursor(player_rect):
     print(angle_deg)
     # Отрицательные углы преобразуем в положительные
     if angle_deg < 0:
-        angle_deg += 360
+        angle_deg += 3606
 
     return angle_deg
 
@@ -316,7 +317,7 @@ white_cat = Animate_smt(100, 15, "gui/white_cat/white_grey", False, 5, 5)
 brown_cat = Animate_smt(50, 5, "gui/brown_cat/brown", False, 5, 5)
 
 Jack = Animate_smt(10, 4, "gui/Jack_guns/Idle", False, 12, 12)
-Jenifer = Animate_smt(20, 4, "gui/Jenifer_skills/Idle-", False, 15, 15)
+Jenifer = Animate_smt(10, 4, "gui/Jenifer_skills/Idle-", False, 8, 8)
 Robert = Animate_smt(10, 4, "gui/Robert_junk/big_demon_idle_anim_f", False, 8, 8)
 Alla = Animate_smt(15, 8, "gui/Alla_food/balancing", False, 15, 15)
 
@@ -411,12 +412,12 @@ class ScreenFade():
         self.fade_counter += self.speed
         if self.direc == 1:
             pygame.draw.rect(screen, self.clr, (0 - self.fade_counter, 0, SCREEN_WIDTH//2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (SCREEN_WIDTH//2 + 50 + self.fade_counter, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
+            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
         if self.direc == 2:
             pygame.draw.rect(screen, self.clr, (0,0, SCREEN_WIDTH, 0 + self.fade_counter))
         if self.direc == 3:
             pygame.draw.rect(screen, self.clr, (0 - self.fade_counter * 7, 0, SCREEN_WIDTH//2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (SCREEN_WIDTH//2 + 50 + self.fade_counter * 7, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
+            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter * 7, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
         if self.fade_counter > SCREEN_WIDTH - 500:
             fade_complete = True
         
@@ -426,8 +427,8 @@ intro_fade = ScreenFade(1, (0,0,0), 4)
 death_fade = ScreenFade(2, (0,0,0), 4)
 shop_fade = ScreenFade(3, (0,0,0), 4)
 
-money = 2
-money_diamond = 2
+money = 5000
+money_diamond = 500
 ship_level = 6
 bar_of_volume_game_music = 0
 bar_of_volume_game_sounds = 5
@@ -452,75 +453,69 @@ flag_shop = 2
 gun_which = 1
 
 while run:
-
     if current_window_selected == "main_menu":
         color_menu()
-        start_im = pygame.image.load("project-VAK/img/gui/button_start.png").convert_alpha()
-        start_im_s = pygame.image.load("project-VAK/img/gui/button_start_select.png").convert_alpha()
-        option_im = pygame.image.load("project-VAK/img/gui/button_options.png").convert_alpha()
-        option_im_s = pygame.image.load("project-VAK/img/gui/button_options_select.png").convert_alpha()
-        credit_im = pygame.image.load("project-VAK/img/gui/button_credits.png").convert_alpha()
-        credit_im_s = pygame.image.load("project-VAK/img/gui/button_credits_select.png").convert_alpha()
-        exit_im = pygame.image.load("project-VAK/img/gui/button_exit.png").convert_alpha()
-        exit_im_s = pygame.image.load("project-VAK/img/gui/button_exit_select.png").convert_alpha()
+        button_images = {
+            "start": {
+                "default": pygame.image.load("project-VAK/img/gui/button_start.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_start_select.png").convert_alpha()
+            },
+            "option": {
+                "default": pygame.image.load("project-VAK/img/gui/button_options.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_options_select.png").convert_alpha()
+            },
+            "credit": {
+                "default": pygame.image.load("project-VAK/img/gui/button_credits.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_credits_select.png").convert_alpha()
+            },
+            "exit": {
+                "default": pygame.image.load("project-VAK/img/gui/button_exit.png").convert_alpha(),
+                "selected": pygame.image.load("project-VAK/img/gui/button_exit_select.png").convert_alpha()
+            }
+        }
 
-        if ship_level == 1:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (680, y_for_ship_pos + 180))
-        if ship_level == 2:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship2.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (680, y_for_ship_pos))     
-        if ship_level == 3:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship3.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 4:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship4.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 5:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship5.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
-        if ship_level == 6:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship6.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
-            screen.blit(ship_im, (580, y_for_ship_pos))
+        ship_images = {
+            1: "project-VAK/img/gui/ships/ship1.png",
+            2: "project-VAK/img/gui/ships/ship2.png",
+            3: "project-VAK/img/gui/ships/ship3.png",
+            4: "project-VAK/img/gui/ships/ship4.png",
+            5: "project-VAK/img/gui/ships/ship5.png",
+            6: "project-VAK/img/gui/ships/ship6.png"
+        }
+
+        ship_im = pygame.image.load(ship_images[ship_level]).convert_alpha()
+        ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 5), int(ship_im.get_height() * 5)))
+        screen.blit(ship_im, (680 if ship_level == 1 else 580, y_for_ship_pos + 180 if ship_level == 1 else y_for_ship_pos))
 
         draw_text("SPACE V", font_2, (255, 255, 255), 10, 90)
         draw_text("ver 0.6", font, (155, 55, 95), 1440, 860)
         draw_text("ver 0.6", font, (90, 90, 90), 1440, 858)
-        
+
         y_for_ship_pos += floating_ship_speed
-        if y_for_ship_pos >= 320:
-            floating_ship_speed = -floating_ship_speed
-        if y_for_ship_pos <= 290:
+        if y_for_ship_pos >= 320 or y_for_ship_pos <= 290:
             floating_ship_speed = -floating_ship_speed
 
-        credit_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 210, credit_im, 7, credit_im_s)
-        start_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 - 10, start_im, 7, start_im_s)
-        option_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 100, option_im, 7, option_im_s)
-        exit_button = Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 320, exit_im, 7, exit_im_s)
+        buttons = {
+            "credit": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 210, button_images["credit"]["default"], 7, button_images["credit"]["selected"]),
+            "start": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 - 10, button_images["start"]["default"], 7, button_images["start"]["selected"]),
+            "option": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 100, button_images["option"]["default"], 7, button_images["option"]["selected"]),
+            "exit": Button(SCREEN_WIDTH // 45, SCREEN_HEIGHT // 2 + 320, button_images["exit"]["default"], 7, button_images["exit"]["selected"])
+        }
 
-        if credit_button.draw(screen):
+        if buttons["credit"].draw(screen):
             current_window_selected = "credits"
-        if start_button.draw(screen):
-                city_noise.play(-1)
-                start_intro = True
-                current_window_selected = "home"
-        if option_button.draw(screen):
+        if buttons["start"].draw(screen):
+            city_noise.play(-1)
+            start_intro = True
+            current_window_selected = "home"
+        if buttons["option"].draw(screen):
             current_window_selected = "options"
-        if exit_button.draw(screen):
+        if buttons["exit"].draw(screen):
             run = False
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
 
     if current_window_selected == "home":
         page = 1
@@ -528,33 +523,23 @@ while run:
         clock.tick(FPS)
         back_ground_for_home = pygame.image.load("project-VAK/img/gui/menu_in_play.png").convert_alpha()
         back_ground_for_home = pygame.transform.scale(back_ground_for_home, (int(back_ground_for_home.get_width() * 4), int(back_ground_for_home.get_height() * 5.1)))
-        pygame.draw.rect(screen, (0,0,0), (-20, 0, 2500, 2600))
+        screen.blit(back_ground_for_home, (0,12))
         screen.blit(back_ground_for_home, (0,-80))
-        
-        if ship_level == 1:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4), int(ship_im.get_height() * 4)))
-            screen.blit(ship_im, (460, y_for_ship_pos_for_menu))
-        if ship_level == 2:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship2.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.2), int(ship_im.get_height() * 4.2)))
-            screen.blit(ship_im, (330, y_for_ship_pos_for_menu - 130))     
-        if ship_level == 3:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship3.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.4), int(ship_im.get_height() * 4.4)))
-            screen.blit(ship_im, (300 , y_for_ship_pos_for_menu - 150))
-        if ship_level == 4:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship4.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.4), int(ship_im.get_height() * 4.4)))
+    
+        ship_images = {
+            1: ("project-VAK/img/gui/ships/ship1.png", 4),
+            2: ("project-VAK/img/gui/ships/ship2.png", 4.2),
+            3: ("project-VAK/img/gui/ships/ship3.png", 4.4),
+            4: ("project-VAK/img/gui/ships/ship4.png", 4.4),
+            5: ("project-VAK/img/gui/ships/ship5.png", 4.6),
+            6: ("project-VAK/img/gui/ships/ship6.png", 4.5)
+        }
+    
+        if ship_level in ship_images:
+            ship_im = pygame.image.load(ship_images[ship_level][0]).convert_alpha()
+            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * ship_images[ship_level][1]), int(ship_im.get_height() * ship_images[ship_level][1])))
             screen.blit(ship_im, (310, y_for_ship_pos_for_menu - 170))
-        if ship_level == 5:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship5.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.6), int(ship_im.get_height() * 4.6)))
-            screen.blit(ship_im, (310, y_for_ship_pos_for_menu - 230))
-        if ship_level == 6:
-            ship_im = pygame.image.load("project-VAK/img/gui/ships/ship6.png").convert_alpha()
-            ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4.5), int(ship_im.get_height() * 4.5)))
-            screen.blit(ship_im, (290, y_for_ship_pos_for_menu - 200))
+    
         player_for_menu.update()
         player_for_menu.draw()
         
@@ -566,7 +551,6 @@ while run:
 
         if player_for_menu.rect.x >= 500 and player_for_menu.rect.x <= 590:
             draw_text("PRESS SPACE TO FLY INTO THE SPACE", font_4, (255,255,255), 20, 12)
-            enter_shop = "play on planet"
         if player_for_menu.rect.x >= 5 and player_for_menu.rect.x <= 95:
             draw_text("PRESS SPACE TO ENTER THE WEAPONS STORE", font_4, (255,255,255), 20, 12)
             enter_shop = "weapons"
@@ -622,8 +606,6 @@ while run:
                     is_moving_left = True
                 if event.key == pygame.K_d:
                     is_moving_right = True
-                if event.key == pygame.K_s:
-                    is_moving_down = True
                 if event.key == pygame.K_ESCAPE:
                     run = False
                 if event.key == pygame.K_SPACE:
@@ -634,8 +616,6 @@ while run:
                         current_window_selected = enter_shop
                         city_noise.stop()
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_s:
-                    is_moving_down = False
                 if event.key == pygame.K_a:
                     is_moving_left = False
                 if event.key == pygame.K_d:
@@ -668,396 +648,37 @@ while run:
         move_for_guns = 170
         # кнопки для покупки тут как много ща будет
         if page == 1:
-            for i in range(len(guns_player_have) - 17):
-                    if i == 0:
-                        if guns_player_have[i] == 2:
-                            b1 = Button(14, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b1 = Button(14, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b1 = Button(14, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 1:
-                        if guns_player_have[i] == 2:
-                            b2 = Button(164, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b2 = Button(164, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b2 = Button(164, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 2:
-                        if guns_player_have[i] == 2:
-                            b3 = Button(334,110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b3 = Button(334, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b3 = Button(334, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 3:
-                        if guns_player_have[i] == 2:
-                            b4 = Button(494, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b4 = Button(494, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b4 = Button(494, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 4:
-                        if guns_player_have[i] == 2:
-                            b5 = Button(655, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b5 = Button(655, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b5 = Button(655, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 5:
-                        if guns_player_have[i] == 2:
-                            b6 = Button(865, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b6 = Button(865, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b6 = Button(865, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
+            button_positions = [
+    (14, 110), (164, 110), (334, 110), (494, 110), (655, 110), (865, 110),
+    (14, 320), (184, 320), (344, 320), (564, 320), (744, 320), (914, 320),
+    (14, 540), (174, 540), (344, 540), (534, 540), (684, 540), (884, 540),
+    (10, 740), (170, 740), (344, 740), (514, 740), (684, 740), (864, 740)
+]
 
-                    if i == 6:
-                        if guns_player_have[i] == 2:
-                            b7 = Button(14, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b7 = Button(14, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b7 = Button(14, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 7:
-                        if guns_player_have[i] == 2:
-                            b8 = Button(184, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b8 = Button(184, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b8 = Button(184, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 8:
-                        if guns_player_have[i] == 2:
-                            b9 = Button(344, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b9 = Button(344, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b9 = Button(344, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 9:
-                        if guns_player_have[i] == 2:
-                            b10 = Button(564, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b10 = Button(564, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b10 = Button(564, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 10:
-                        if guns_player_have[i] == 2:
-                            b11 = Button(744, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b11 = Button(744, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b11 = Button(744, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed) 
-                    if i == 11:
-                        if guns_player_have[i] == 2:
-                            b12 = Button(914, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b12 = Button(914, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b12 = Button(914, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)    
+            for i, (x, y) in enumerate(button_positions):
+                index = i % len(guns_player_have)
+                if guns_player_have[index] == 2:
+                    button = Button(x, y, sml_button_yes, 7, sml_button_yes, sml_button_yes)
+                elif guns_player_have[index] == 1:
+                    button = Button(x, y, sml_button_empty, 7, sml_button_empty, sml_button_empty)
+                else:
+                    button = Button(x, y, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
 
-                    if i == 12:
-                        if guns_player_have[i] == 2:
-                            b13 = Button(14, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b13 = Button(14, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b13 = Button(14, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 13:
-                        if guns_player_have[i] == 2:
-                            b14 = Button(174, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b14 = Button(174, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b14 = Button(174, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 14:
-                        if guns_player_have[i] == 2:
-                            b15 = Button(344, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b15 = Button(344, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b15 = Button(344, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 15:
-                        if guns_player_have[i] == 2:
-                            b16= Button(534, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b16 = Button(534, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b16 = Button(534, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 16:
-                        if guns_player_have[i] == 2:
-                            b17 = Button(684, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b17 = Button(684, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b17 = Button(684, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 17:
-                        if guns_player_have[i] == 2:
-                            b18 = Button(884, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b18 = Button(884, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b18 = Button(884, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
+                locals()[f'b{i + 1}'] = button
 
-                    if i == 18:
-                        if guns_player_have[i] == 2:
-                            b19 = Button(10, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b19 = Button(10, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b19 = Button(10, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 19:
-                        if guns_player_have[i] == 2:
-                            b20 = Button(170, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b20 = Button(170, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b20 = Button(170, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 20:
-                        if guns_player_have[i] == 2:
-                            b21 = Button(344, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b21 = Button(344, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b21 = Button(344, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 21:
-                        if guns_player_have[i] == 2:
-                            b22 = Button(514, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b22 = Button(514, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b22 = Button(514, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 22:
-                        if guns_player_have[i] == 2:
-                            b23 = Button(684, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b23 = Button(684, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b23 = Button(684, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 23:
-                        if guns_player_have[i] == 2:
-                            b24 = Button(864, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b24 = Button(864, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b24 = Button(864, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-            if b1.draw(screen):
-                if guns_player_have[0] == 0:
-                    page = 3
-                    gun_which = 1
-                if guns_player_have[0] == 1 or guns_player_have[0] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[0] = 2
-                    page = 3
-                    gun_which = 1
-            if b2.draw(screen):
-                if guns_player_have[1] == 0:
-                    page = 3
-                    gun_which = 2
-                if guns_player_have[1] == 1 or guns_player_have[1] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[1] = 2
-                    page = 3
-                    gun_which = 2
-            if b3.draw(screen):
-                if guns_player_have[2] == 0 :
-                    page = 3
-                    gun_which = 3
-                if guns_player_have[2] == 1 or guns_player_have[2] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[2] = 2
-                    page = 3
-                    gun_which = 3
-            if b4.draw(screen):
-                if guns_player_have[3] == 0 or guns_player_have[3] == 2:
-                    page = 3
-                    gun_which = 4
-                if guns_player_have[3] == 1:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[3] = 2
-                    page = 3
-                    gun_which = 4
-            if b5.draw(screen):
-                if guns_player_have[4] == 0:
-                    page = 3
-                    gun_which = 5
-                if guns_player_have[4] == 1 or guns_player_have[4] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[4] = 2
-                    page = 3
-                    gun_which = 5
-            if b6.draw(screen):
-                if guns_player_have[5] == 0:
-                    page = 3
-                    gun_which = 6
-                if guns_player_have[5] == 1 or guns_player_have[4] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[5] = 2
-                    page = 3
-                    gun_which = 6
+                
+            for i in range(24):
+                if globals()[f"b{i+1}"].draw(screen):
+                    if guns_player_have[i] == 0 or guns_player_have[i] == 2:
+                        page = 3
+                        gun_which = i + 1
+                    elif guns_player_have[i] == 1:
+                        guns_player_have[guns_player_have.index(2)] = 1
+                        guns_player_have[i] = 2
+                        page = 3
+                        gun_which = i + 1
 
-            if b7.draw(screen):
-                if guns_player_have[6] == 0:
-                    page = 3
-                    gun_which = 7
-                if guns_player_have[6] == 1 or guns_player_have[6] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[6] = 2
-                    page = 3
-                    gun_which = 7 
-            if b8.draw(screen):
-                if guns_player_have[7] == 0:
-                    page = 3
-                    gun_which = 8
-                if guns_player_have[7] == 1:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[7] = 2
-                    page = 3
-                    gun_which = 8
-            if b9.draw(screen):
-                if guns_player_have[8] == 0:
-                    page = 3
-                    gun_which = 9
-                if guns_player_have[8] == 1 or guns_player_have[8] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[8] = 2
-                    page = 3
-                    gun_which = 9
-            if b10.draw(screen):
-                if guns_player_have[9] == 0:
-                    page = 3
-                    gun_which = 10
-                if guns_player_have[9] == 1 or guns_player_have[8] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[9] = 2
-                    page = 3
-                    gun_which = 10
-            if b11.draw(screen):
-                if guns_player_have[10] == 0:
-                    page = 3
-                    gun_which = 11
-                if guns_player_have[10] == 1 or guns_player_have[10] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[10] = 2
-                    page = 3
-                    gun_which = 11
-            if b12.draw(screen):
-                if guns_player_have[11] == 0:
-                    page = 3
-                    gun_which = 12
-                if guns_player_have[11] == 1 or guns_player_have[11] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[11] = 2
-                    page = 3
-                    gun_which = 12
-            if b13.draw(screen):
-                if guns_player_have[12] == 0 :
-                    page = 3
-                    gun_which = 13
-                if guns_player_have[12] == 1 or guns_player_have[12] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[12] = 2
-                    page = 3
-                    gun_which = 13
-            if b14.draw(screen):
-                if guns_player_have[13] == 0:
-                    page = 3
-                    gun_which = 14
-                if guns_player_have[13] == 1 or guns_player_have[13] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[13] = 2
-                    page = 3
-                    gun_which = 14
-            if b15.draw(screen):
-                if guns_player_have[14] == 0:
-                    page = 3
-                    gun_which = 15
-                if guns_player_have[14] == 1 or guns_player_have[14] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[14] = 2
-                    page = 3
-                    gun_which = 15
-            if b16.draw(screen):
-                if guns_player_have[15] == 0:
-                    page = 3
-                    gun_which = 16
-                if guns_player_have[15] == 1 or guns_player_have[15] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[15] = 2
-                    page = 3
-                    gun_which = 16
-            if b17.draw(screen):
-                if guns_player_have[16] == 0 :
-                    page = 3
-                    gun_which = 17
-                if guns_player_have[16] == 1 or guns_player_have[16] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[16] = 2
-                    page = 3
-                    gun_which = 17
-            if b18.draw(screen):
-                if guns_player_have[17] == 0:
-                    page = 3
-                    gun_which = 18
-                if guns_player_have[17] == 1 or guns_player_have[17] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[17] = 2
-                    page = 3
-                    gun_which = 18
-            if b19.draw(screen):
-                if guns_player_have[18] == 0:
-                    page = 3
-                    gun_which = 19
-                if guns_player_have[18] == 1 or guns_player_have[18] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[18] = 2                    
-                    page = 3
-                    gun_which = 19
-            if b20.draw(screen):
-                if guns_player_have[19] == 0 :
-                    page = 3
-                    gun_which = 20
-                if guns_player_have[19] == 1 or guns_player_have[19] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[19] = 2
-                    page = 3
-                    gun_which = 20
-            if b21.draw(screen):
-                if guns_player_have[20] == 0:
-                    page = 3
-                    gun_which = 21
-                if guns_player_have[20] == 1 or guns_player_have[20] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[20] = 2
-                    page = 3
-                    gun_which = 21
-            if b22.draw(screen):
-                if guns_player_have[21] == 0:
-                    page = 3
-                    gun_which = 22
-                if guns_player_have[21] == 1 or guns_player_have[21] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[21] = 2
-                    page = 3
-                    gun_which = 22
-            if b23.draw(screen):
-                if guns_player_have[22] == 0 :
-                    page = 3
-                    gun_which = 23
-                if guns_player_have[22] == 1 or guns_player_have[22] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[22] = 2
-                    page = 3
-                    gun_which = 23
-            if b24.draw(screen):
-                if guns_player_have[23] == 0 :
-                    page = 3
-                    gun_which = 24
-                if guns_player_have[23] == 1 or guns_player_have[23] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[23] = 2
-                    page = 3
-                    gun_which = 24
-
+            #
             button_right_im = pygame.image.load("project-VAK/img/gui/button_right.png").convert_alpha()
             button_right_im_press = pygame.image.load("project-VAK/img/gui/button_right_press.png").convert_alpha()
             button_right = Button(1020, 700, button_right_im, 7, button_right_im, button_right_im_press)
@@ -1065,220 +686,52 @@ while run:
             if button_right.draw(screen):
                 page = 2
 
-            for i in range(6):
+            for i in range(24):
                 gun = pygame.image.load(f"project-VAK/img/gui/guns/{i + 1}.png").convert_alpha()
                 gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i > 0:
-                    screen.blit(gun, (10 + move_for_guns * i - 25, 30))
+                if i < 6:
+                    x = 10 + move_for_guns * i - 25 if i > 0 else 10 + move_for_guns * i
+                    screen.blit(gun, (x, 30))
+                elif i < 12:
+                    x = 10 + move_for_guns * (i - 6) + 50 if i != 7 and i != 9 and i != 11 else 10 + move_for_guns * (i - 6)
+                    y = 245 if i != 10 else 265
+                    screen.blit(gun, (x, y))
+                elif i < 18:
+                    screen.blit(gun, (10 + move_for_guns * (i - 12), 445))
                 else:
-                    screen.blit(gun, (10 + move_for_guns * i , 30))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{6 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i > 1 and i != 2 and i != 4:
-                    screen.blit(gun, (10 + move_for_guns * i + 50, 245))
-                elif i == 2:
-                    screen.blit(gun, (10 + move_for_guns * i, 245))
-                elif i == 4:
-                    screen.blit(gun, (10 + move_for_guns * i + 70, 265))
-                else:
-                    screen.blit(gun, (10 + move_for_guns * i, 230))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{12 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                screen.blit(gun, (10 + move_for_guns * i, 445))
-            for i in range(6):
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/{18 + i + 1}.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 5), int(gun.get_height() * 5)))
-                if i == 0:
-                    screen.blit(gun, (10 + move_for_guns * i, 685))
-                elif i == 4:
-                    screen.blit(gun, (10 + move_for_guns * i, 685))
-                elif i == 1:
-                    screen.blit(gun, (10 + move_for_guns * i, 675))
-                else:
-                    screen.blit(gun, (10 + move_for_guns * i, 655))
+                    y = 685 if i == 18 or i == 22 else 675 if i == 19 else 655
+                    screen.blit(gun, (10 + move_for_guns * (i - 18), y))
+
 
         if page == 2:
-            for i in range(len(guns_player_have)):
-                if i == 24:
-                    if guns_player_have[i] == 2:
-                        b25 = Button(14, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b25 = Button(14, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b25 = Button(14, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 25:
-                    if guns_player_have[i] == 2:
-                        b26 = Button(204, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b26 = Button(204, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b26 = Button(204, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 26:
-                    if guns_player_have[i] == 2:
-                        b27 = Button(384,110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b27 = Button(384, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b27 = Button(384, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 27:
-                    if guns_player_have[i] == 2:
-                        b28 = Button(574, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b28 = Button(574, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b28 = Button(574, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 28:
-                    if guns_player_have[i] == 2:
-                        b29 = Button(785, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b29 = Button(785, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b29 = Button(785, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 29:
-                    if guns_player_have[i] == 2:
-                        b30 = Button(985, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b30 = Button(985, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b30 = Button(985, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
+            button_positions = [
+                (14, 110), (204, 110), (384, 110), (574, 110), (785, 110), (985, 110),
+                (14, 320), (234, 320), (494, 320), (704, 320), (904, 320)
+            ]
 
-                if i == 30:
-                    if guns_player_have[i] == 2:
-                        b31 = Button(14, 280, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b31 = Button(14, 280, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b31 = Button(14, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 31:
-                    if guns_player_have[i] == 2:
-                        b32 = Button(234, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b32 = Button(234, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b32 = Button(234, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 32:
-                    if guns_player_have[i] == 2:
-                        b33 = Button(494, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b33 = Button(494, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b33 = Button(494, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 33:
-                    if guns_player_have[i] == 2:
-                        b34 = Button(704, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b34 = Button(704, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b34 = Button(704, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                if i == 34:
-                    if guns_player_have[i] == 2:
-                        b35 = Button(904, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                    if guns_player_have[i] == 1:
-                        b35 = Button(904, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                    if guns_player_have[i] == 0:
-                        b35 = Button(904, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed) 
+            for i, (x, y) in enumerate(button_positions, start=25):
+                if guns_player_have[i - 1] == 2:
+                    button = Button(x, y, sml_button_yes, 7, sml_button_yes, sml_button_yes)
+                elif guns_player_have[i - 1] == 1:
+                    button = Button(x, y, sml_button_empty, 7, sml_button_empty, sml_button_empty)
+                else:
+                    button = Button(x, y, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
 
-            if b25.draw(screen):
-                if guns_player_have[24] == 0:
-                    page = 3
-                    gun_which = 25
-                if guns_player_have[24] == 1 or guns_player_have[24] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[24] = 2
-                    page = 3
-                    gun_which = 25
-            if b26.draw(screen):
-                if guns_player_have[25] == 0:
-                    page = 3
-                    gun_which = 26
-                if guns_player_have[25] == 1 or guns_player_have[25] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[25] = 2
-                    page = 3
-                    gun_which = 26
-            if b27.draw(screen):
-                if guns_player_have[26] == 0 or guns_player_have[26] == 2:
-                    gun_which = 27
-                    page = 3
-                if guns_player_have[26] == 1 or guns_player_have[26] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[26] = 2
-                    gun_which = 27
-                    page = 3
-            if b28.draw(screen):
-                if guns_player_have[27] == 0 or guns_player_have[27] == 2:
-                    gun_which = 28
-                    page = 3
-                if guns_player_have[27] == 1 or guns_player_have[27] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[27] = 2
-                    gun_which = 28
-                    page = 3
-            if b29.draw(screen):
-                if guns_player_have[28] == 0:
-                    gun_which = 29
-                    page = 3
-                if guns_player_have[28] == 1 or guns_player_have[28] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[28] = 2
-                    gun_which = 29
-                    page = 3
-            if b30.draw(screen):
-                if guns_player_have[29] == 0:
-                    gun_which = 30
-                    page = 3
-                if guns_player_have[29] == 1 or guns_player_have[29] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[29] = 2
-                    gun_which = 30
-                    page = 3
-            if b31.draw(screen):
-                if guns_player_have[30] == 0:
-                    gun_which = 31
-                    page = 3
-                if guns_player_have[30] == 1 or guns_player_have[30] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[30] = 2
-                    gun_which = 31
-                    page = 3
-            if b32.draw(screen):
-                if guns_player_have[31] == 0:
-                    gun_which = 32
-                    page = 3
-                if guns_player_have[31] == 1 or guns_player_have[31] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[31] = 2
-                    gun_which = 32
-                    page = 3
-            if b33.draw(screen):
-                if guns_player_have[32] == 0:
-                    gun_which = 33
-                    page = 3
-                if guns_player_have[32] == 1 or guns_player_have[32] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[32] = 2
-                    gun_which = 33
-                    page = 3
-            if b34.draw(screen):
-                if guns_player_have[33] == 0:
-                    gun_which = 34
-                    page = 3
-                if guns_player_have[33] == 1 or guns_player_have[33] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[33] = 2
-                    gun_which = 34
-                    page = 3
-            if b35.draw(screen):
-                if guns_player_have[34] == 0:
-                    gun_which = 35
-                    page = 3
-                if guns_player_have[34] == 1 or guns_player_have[34] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[34] = 2
-                    gun_which = 35
-                    page = 3
+                locals()[f'b{i}'] = button
+
+
+            for i in range(25, 36):
+                if globals()[f"b{i}"].draw(screen):
+                    index = i - 1
+                    if guns_player_have[index] == 0:
+                        gun_which = i
+                        page = 3
+                    elif guns_player_have[index] == 1 or guns_player_have[index] == 2:
+                        guns_player_have[guns_player_have.index(2)] = 1
+                        guns_player_have[index] = 2
+                        gun_which = i
+                        page = 3
+
             button_left_im = pygame.image.load("project-VAK/img/gui/button_left.png").convert_alpha()
             button_left_im_press = pygame.image.load("project-VAK/img/gui/button_left_press.png").convert_alpha()
             button_left = Button(20, 450, button_left_im, 7, button_left_im, button_left_im_press)
@@ -1327,996 +780,77 @@ while run:
 
             diamond_im_sml = pygame.image.load(f"project-VAK/img/gui/money/diamond_sml.png").convert_alpha()
             diamond_im_sml = pygame.transform.scale(diamond_im_sml, (int(diamond_im_sml.get_width() * 5), int(diamond_im_sml.get_height() * 5)))   
+            guns = [
+    {"name": "Celestial Blaster", "description": [], "rarity": "common", "cost": 50, "diamonds": 1, "charges": 10, "damage": 10, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/1.png").convert_alpha()},
+    {"name": "Starstrike Cannon", "description": [], "rarity": "common", "cost": 20, "diamonds": 0, "charges": 15, "damage": 15, "speed": 1.2, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/2.png").convert_alpha()},
+    {"name": "Nebula Ray", "description": [], "rarity": "common", "cost": 50, "diamonds": 0, "charges": 20, "damage": 10, "speed": 0.8, "bullets": 2, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/3.png").convert_alpha()},
+    {"name": "Lunar Phaser", "description": [], "rarity": "common", "cost": 90, "diamonds": 1, "charges": 30, "damage": 30, "speed": 0.6, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/4.png").convert_alpha()},
+    {"name": "Plasma Cannon", "description": [], "rarity": "common", "cost": 130, "diamonds": 0, "charges": 25, "damage": 50, "speed": 0.8, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/5.png").convert_alpha()},
+    {"name": "Venusian Vortex", "description": [], "rarity": "common", "cost": 145, "diamonds": 2, "charges": 30, "damage": 25, "speed": 1.3, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/6.png").convert_alpha()},
+    {"name": "Draco Destructor", "description": [], "rarity": "common", "cost": 200, "diamonds": 1, "charges": 40, "damage": 30, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/7.png").convert_alpha()},
+    {"name": "Infinity Laser", "description": [], "rarity": "common", "cost": 245, "diamonds": 4, "charges": 40, "damage": 30, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/8.png").convert_alpha()},
+    {"name": "Automatic Hydra Homeing", "description": [], "rarity": "common", "cost": 240, "diamonds": 0, "charges": 25, "damage": 30, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/9.png").convert_alpha()},
+    {"name": "Quantum Torpedo", "description": [], "rarity": "common", "cost": 240, "diamonds": 0, "charges": 10, "damage": 50, "speed": 0.5, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/10.png").convert_alpha()},
+    {"name": "Plasma Lance", "description": [], "rarity": "common", "cost": 225, "diamonds": 2, "charges": 3, "damage": 60, "speed": 1.2, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/11.png").convert_alpha()},
+    {"name": "Supernova Staff", "description": [], "rarity": "common", "cost": 310, "diamonds": 1, "charges": 30, "damage": 75, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/12.png").convert_alpha()},
+    {"name": "Quantum Accelerator", "description": [], "rarity": "common", "cost": 470, "diamonds": 2, "charges": 40, "damage": 100, "speed": 1.2, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/13.png").convert_alpha()},
+    {"name": "Solar Wind Whip", "description": [], "rarity": "common", "cost": 400, "diamonds": 3, "charges": 50, "damage": 120, "speed": 1.5, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/14.png").convert_alpha()},
+    {"name": "Starfire Bow", "description": [], "rarity": "common", "cost": 430, "diamonds": 1, "charges": 10, "damage": 150, "speed": 1.5, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/15.png").convert_alpha()},
+    {"name": "Meteoric Assault Cannon", "description": [], "rarity": "common", "cost": 470, "diamonds": 0, "charges": 30, "damage": 170, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/16.png").convert_alpha()},
+    {"name": "Comet Slice Dagger", "description": [], "rarity": "common", "cost": 440, "diamonds": 4, "charges": 20, "damage": 190, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/17.png").convert_alpha()},
+    {"name": "Ion Resonator Rifle", "description": [], "rarity": "common", "cost": 560, "diamonds": 5, "charges": 30, "damage": 185, "speed": 1.5, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/18.png").convert_alpha()},
+    {"name": "Interstellar Hunter", "description": [], "rarity": "common", "cost": 600, "diamonds": 3, "charges": 1, "damage": 250, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/19.png").convert_alpha()},
+    {"name": "Gravity Particle Rifle", "description": [], "rarity": "common", "cost": 750, "diamonds": 4, "charges": 10, "damage": 120, "speed": 0.5, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/20.png").convert_alpha()},
+    {"name": "Electr. Pulse Whip", "description": [], "rarity": "common", "cost": 800, "diamonds": 6, "charges": 4, "damage": 200, "speed": 1.3, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/21.png").convert_alpha()},
+    {"name": "Orion's Odyssey", "description": [], "rarity": "common", "cost": 840, "diamonds": 9, "charges": 10, "damage": 200, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/22.png").convert_alpha()},
+    {"name": "Interstellar Hunter", "description": [], "rarity": "common", "cost": 900, "diamonds": 3, "charges": 1, "damage": 320, "speed": 1, "sprite": pygame.image.load(f"project-VAK/img/gui/guns/23.png").convert_alpha()},
+    {"name": "Galactic Gauss Random Gun", "description": [], "rarity": "common", "cost": 700, "diamonds": 3, "charges": "20/30/40", "damage": "1/2/5 per shoot", "speed": "0.5/1/1.5", "sprite": pygame.image.load("project-VAK/img/gui/guns/24.png").convert_alpha()},
+    {"name": "Supernova Sights", "description": [], "rarity": "common", "cost": 1200, "diamonds": 6, "charges": "40", "damage": "2 per shoot", "speed": "1.4", "sprite": pygame.image.load("project-VAK/img/gui/guns/25.png").convert_alpha()},
+    {"name": "Comet Carver", "description": [], "rarity": "common", "cost": 1010, "diamonds": 4, "charges": "5", "damage": "1 per shoot", "speed": "3", "sprite": pygame.image.load("project-VAK/img/gui/guns/26.png").convert_alpha()},
+    {"name": "Starry Siege", "description": [], "rarity": "common", "cost": 1400, "diamonds": 1, "charges": "10", "damage": "1 per shoot", "speed": "2", "sprite": pygame.image.load("project-VAK/img/gui/guns/27.png").convert_alpha()},
+    {"name": "Interstellar Interceptor", "description": [], "rarity": "common", "cost": 1620, "diamonds": 4, "charges": "16", "damage": "4 per shoot", "speed": "1", "sprite": pygame.image.load("project-VAK/img/gui/guns/28.png").convert_alpha()},
+    {"name": "Asteroid Artillery", "description": [], "rarity": "common", "cost": 1720, "diamonds": 8, "charges": "20", "damage": "burst shooting", "speed": "1.5", "sprite": pygame.image.load("project-VAK/img/gui/guns/29.png").convert_alpha()},
+    {"name": "Nebula Nuke", "description": [], "rarity": "common", "cost": 2320, "diamonds": 5, "charges": "25", "damage": "5 per shoot", "speed": "1", "sprite": pygame.image.load("project-VAK/img/gui/guns/30.png").convert_alpha()},
+    {"name": "Sagittarius Seeker", "description": [], "rarity": "common", "cost": 3640, "diamonds": 8, "charges": "1", "damage": "1 per shoot", "speed": "0.8", "sprite": pygame.image.load("project-VAK/img/gui/guns/31.png").convert_alpha()},
+    {"name": "Polaris Missiles", "description": [], "rarity": "common", "cost": 5220, "diamonds": 9, "charges": "45", "damage": "1 per shoot", "speed": "1", "sprite": pygame.image.load("project-VAK/img/gui/guns/32.png").convert_alpha()},
+    {"name": "Photon Blaster", "description": [], "rarity": "common", "cost": 5760, "diamonds": 9, "charges": "10", "damage": "1 per shoot", "speed": "1", "sprite": pygame.image.load("project-VAK/img/gui/guns/33.png").convert_alpha()},
+    {"name": "Ion Storm Rifle", "description": [], "rarity": "common", "cost": 5620, "diamonds": 9, "charges": "40", "damage": "burst shooting", "speed": "1", "sprite": pygame.image.load("project-VAK/img/gui/guns/34.png").convert_alpha()},
+    {"name": "Comet Carnage", "description": [], "rarity": "common", "cost": 9000, "diamonds": 9, "charges": "1", "damage": "1 per shoot", "speed": "0.4", "sprite": pygame.image.load("project-VAK/img/gui/guns/35.png").convert_alpha()},
+]
 
-            if gun_which == 1:
-                if guns_player_have[0] == 2 or guns_player_have[0] == 1:
-                    pass
-                elif money >= 50 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 50
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[0] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 600, 690)
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/1.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Celestial Blaster", font_3, (255,205,205), 450, 228)
-                draw_text("Celestial Blaster", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
+
+            if gun_which in list(range(1, len(guns)+1)):
+                gun = guns[gun_which - 1]
+                if guns_player_have[gun_which - 1] not in [1, 2]:
+                    if money >= gun["cost"] and money_diamond >= gun["diamonds"]:
+                        if button_buy.draw(screen):
+                            money -= gun["cost"]
+                            money_diamond -= gun["diamonds"]
+                            guns_player_have[guns_player_have.index(2)] = 1
+                            guns_player_have[gun_which - 1] = 2
+                    else:
+                        draw_text("You can't buy it!", font_3, (255,255,255), 600, 690)
+                gun_image = gun["sprite"]
+                gun_image = pygame.transform.scale(gun_image, (int(gun_image.get_width() * 13), int(gun_image.get_height() * 13)))
+                screen.blit(gun_image, (0, 250))
+                draw_text(gun["name"], font_3, (255,205,205), 450, 228)
+                draw_text(gun["name"], font_3, (255,255,255), 450, 230)
+                draw_text(gun["rarity"], font_3, (255,205,205), 450, 280)
+                description = gun["description"]
+                if len(description) == 0:
+                    description = ["test empty 1", "test empty 2"]
+                draw_text(description[0], font_4, (255,0,90), 580, 88)
+                draw_text(description[1], font_4, (255,0,90), 573, 128)
                 draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 10 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-
-            if gun_which == 2:
-                if guns_player_have[1] == 2 or guns_player_have[1] == 1:
-                    pass
-                elif money >= 20 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 20
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[1] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/2.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Starstrike Cannon", font_3, (255,205,205), 450, 228)
-                draw_text("Starstrike Cannon", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 15 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 15 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.2 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 20", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
+                draw_text(f"- {gun['charges']} charges", font_3, (255,255,255), 450, 350)
+                draw_text(f"- {gun.get('bullets', 1)} bullet per shot", font_3, (255,255,255), 450, 400)
+                draw_text(f"- {gun['damage']} damage", font_3, (255,255,255), 450, 450)
+                draw_text(f"- {gun['speed']} Speed", font_3, (255,255,255), 450, 500)
+                draw_text(f"Cost: {gun['cost']}", font_3, (255,255,255), 150, 680)
+                draw_text(f"{gun['diamonds']}", font_3, (255,255,255), 520, 680)
                 screen.blit(money_im_sml,(390, 660))
                 screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 3:
-                if guns_player_have[2] == 2 or guns_player_have[2] == 1:
-                    pass
-                elif money >= 50 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 50
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[2] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/3.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Nebula Ray", font_3, (255,205,205), 450, 228)
-                draw_text("Nebula Ray", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 20 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 2 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 10 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.8 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 50", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 4:
-                if guns_player_have[3] == 2 or guns_player_have[3] == 1:
-                    pass
-                elif money >= 90 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 90
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[3] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/4.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Lunar Phaser", font_3, (255,205,205), 450, 228)
-                draw_text("Lunar Phaser", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 30 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 30 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.6 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 90", font_3, (255,255,255), 150, 680)
-                draw_text("1", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 5:
-                if guns_player_have[4] == 2 or guns_player_have[4] == 1:
-                    pass
-                elif money >= 130 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 130
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[4] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/5.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Plasma Cannon", font_3, (255,205,205), 450, 228)
-                draw_text("Plasma Cannon", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 25 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 50 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.8 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 130", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 6:
-                if guns_player_have[5] == 2 or guns_player_have[5] == 1:
-                    pass
-                elif money >= 145 and money_diamond >= 2:
-                    if button_buy.draw(screen):
-                        money -= 145
-                        money_diamond -= 2
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[5] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/6.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Venusian Vortex", font_3, (255,205,205), 450, 228)
-                draw_text("Venusian Vortex", font_3, (255,255,255), 450, 230)
-                draw_text("common", font_3, (255,205,205), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,205,205), 0, 802)
-                draw_text("- 30 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 25 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.3 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 145", font_3, (255,255,255), 150, 680)
-                draw_text("2", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-
-            if gun_which == 7:
-                if guns_player_have[6] == 2 or guns_player_have[6] == 1:
-                    pass
-                elif money >= 200 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 200
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[6] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/7.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Draco Destructor", font_3, (60,255,60), 450, 228)
-                draw_text("Draco Destructor", font_3, (255,255,255), 450, 230)
-                draw_text("Rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 bullet per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 30 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 200", font_3, (255,255,255), 150, 680)
-                draw_text("1", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 8:
-                if guns_player_have[7] == 2 or guns_player_have[7] == 1:
-                    pass
-                elif money >= 245 and money_diamond >= 4:
-                    if button_buy.draw(screen):
-                        money -= 245
-                        money_diamond -= 4
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[7] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/8.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Infinity Laser", font_3, (60,255,60), 450, 228)
-                draw_text("Infinity Laser", font_3, (255,255,255), 450, 230)
-                draw_text("rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- lazer", font_3, (255,255,255), 450, 400)
-                draw_text("- 30 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 245", font_3, (255,255,255), 150, 680)
-                draw_text("4", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 9:
-                if guns_player_have[8] == 2 or guns_player_have[8] == 1:
-                    pass
-                elif money >= 240 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 240
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[8] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/9.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Automatic Hydra Homeing", font_3, (60,255,60), 450, 228)
-                draw_text("Automatic Hydra Homeing", font_3, (255,255,255), 450, 230)
-                draw_text("rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 25 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 30 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 240", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))         
-
-            if gun_which == 10:
-                if guns_player_have[9] == 2 or guns_player_have[9] == 1:
-                    pass
-                elif money >= 240 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 240
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[9] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/10.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Quantum Torpedo", font_3, (60,255,60), 450, 228)
-                draw_text("Quantum Torpedo", font_3, (255,255,255), 450, 230)
-                draw_text("rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 50 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 240", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))   
-
-            if gun_which == 11:
-                if guns_player_have[10] == 2 or guns_player_have[10] == 1:
-                    pass
-                elif money >= 225 and money_diamond >= 2:
-                    if button_buy.draw(screen):
-                        money -= 225
-                        money_diamond -= 2
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[10] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/11.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(50, 350))
-                draw_text("Plasma Lance", font_3, (60,255,60), 450, 228)
-                draw_text("Plasma Lance", font_3, (255,255,255), 450, 230)
-                draw_text("rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 3 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 3 pre shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 60 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.2 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 225", font_3, (255,255,255), 150, 680)
-                draw_text("2", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 12:
-                if guns_player_have[11] == 2 or guns_player_have[11] == 1:
-                    pass
-                elif money >= 310 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 310
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[11] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/12.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Supernova Staff", font_3, (60,255,60), 450, 228)
-                draw_text("Supernova Staff", font_3, (255,255,255), 450, 230)
-                draw_text("rare", font_3, (60,255,60), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (60,205,60), 0, 802)
-                draw_text("- 30 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 2 pre shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 75 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 310", font_3, (255,255,255), 150, 680)
-                draw_text("1", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 13:
-                if guns_player_have[12] == 2 or guns_player_have[12] == 1:
-                    pass
-                elif money >= 470 and money_diamond >= 2:
-                    if button_buy.draw(screen):
-                        money -= 470
-                        money_diamond -= 2
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[12] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/13.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Quantum Accelerator", font_3, (255,255,10), 450, 228)
-                draw_text("Quantum Accelerator", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- Lazer", font_3, (255,255,255), 450, 400)
-                draw_text("- 100 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.2 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 470", font_3, (255,255,255), 150, 680)
-                draw_text("2", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 14:
-                if guns_player_have[13] == 2 or guns_player_have[13] == 1:
-                    pass
-                elif money >= 400 and money_diamond >= 3:
-                    if button_buy.draw(screen):
-                        money -= 400
-                        money_diamond -= 3
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[13] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/14.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Solar Wind Whip", font_3, (255,255,10), 450, 228)
-                draw_text("Solar Wind Whip", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 50 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 3 per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 120 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 400", font_3, (255,255,255), 150, 680)
-                draw_text("3", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 15:
-                if guns_player_have[14] == 2 or guns_player_have[14] == 1:
-                    pass
-                elif money >= 430 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 430
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[14] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/15.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Starfire Bow", font_3, (255,255,10), 450, 228)
-                draw_text("Starfire Bow", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 150 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 430", font_3, (255,255,255), 150, 680)
-                draw_text("1", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 16:
-                if guns_player_have[15] == 2 or guns_player_have[15] == 1:
-                    pass
-                elif money >= 470 and money_diamond >= 0:
-                    if button_buy.draw(screen):
-                        money -= 470
-                        money_diamond -= 0
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[15] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/16.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Meteoric Assault Cannon", font_3, (255,255,10), 450, 228)
-                draw_text("Meteoric Assault Cannon", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 30 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 170 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 470", font_3, (255,255,255), 150, 680)
-                draw_text("0", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 17:
-                if guns_player_have[16] == 2 or guns_player_have[16] == 1:
-                    pass
-                elif money >= 440 and money_diamond >= 4:
-                    if button_buy.draw(screen):
-                        money -= 440
-                        money_diamond -= 4
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[16] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/17.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Comet Slice Dagger", font_3, (255,255,10), 450, 228)
-                draw_text("Comet Slice Dagger", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 20 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shot", font_3, (255,255,255), 450, 400)
-                draw_text("- 190 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 440", font_3, (255,255,255), 150, 680)
-                draw_text("4", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 18:
-                if guns_player_have[17] == 2 or guns_player_have[17] == 1:
-                    pass
-                elif money >= 560 and money_diamond >= 5:
-                    if button_buy.draw(screen):
-                        money -= 560
-                        money_diamond -= 5
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[17] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/18.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Ion Resonator Rifle", font_3, (255,255,10), 450, 228)
-                draw_text("Ion Resonator Rifle", font_3, (255,255,255), 450, 230)
-                draw_text("New", font_3, (255,255,10), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,255,10), 0, 802)
-                draw_text("- 30 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 185 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 560", font_3, (255,255,255), 150, 680)
-                draw_text("5", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-
-            if gun_which == 19:
-                if guns_player_have[18] == 2 or guns_player_have[18] == 1:
-                    pass
-                elif money >= 600 and money_diamond >= 3:
-                    if button_buy.draw(screen):
-                        money -= 600
-                        money_diamond -= 3
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[18] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/19.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(50, 350))
-                draw_text("Interstellar Hunter", font_3, (255,55,200), 450, 228)
-                draw_text("Interstellar Hunter", font_3, (255,255,255), 450, 230)
-                draw_text("Epic", font_3, (255,55,200), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,55,200), 0, 802)
-                draw_text("- 1 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 250 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 600", font_3, (255,255,255), 150, 680)
-                draw_text("3", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-            if gun_which == 20:
-                if guns_player_have[19] == 2 or guns_player_have[19] == 1:
-                    pass
-                elif money >= 750 and money_diamond >= 4:
-                    if button_buy.draw(screen):
-                        money -= 750
-                        money_diamond -= 4
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[19] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/20.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Gravity Particle Rifle", font_3, (255,55,200), 450, 228)
-                draw_text("Gravity Particle Rifle", font_3, (255,255,255), 450, 230)
-                draw_text("Epic", font_3, (255,55,200), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,55,200), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 120 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 750", font_3, (255,255,255), 150, 680)
-                draw_text("4", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 21:
-                if guns_player_have[20] == 2 or guns_player_have[20] == 1:
-                    pass
-                elif money >= 800 and money_diamond >= 6:
-                    if button_buy.draw(screen):
-                        money -= 800
-                        money_diamond -= 6
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[20] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/21.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Electr. Pulse Whip", font_3, (255,55,200), 450, 228)
-                draw_text("Electr. Pulse Whip", font_3, (255,255,255), 450, 230)
-                draw_text("Epic", font_3, (255,55,200), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,55,200), 0, 802)
-                draw_text("- 4 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 2 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 200 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.3 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 800", font_3, (255,255,255), 150, 680)
-                draw_text("6", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 22:
-                if guns_player_have[21] == 2 or guns_player_have[21] == 1:
-                    pass
-                elif money >= 840 and money_diamond >= 9:
-                    if button_buy.draw(screen):
-                        money -= 840
-                        money_diamond -= 9
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[21] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/22.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Orion's Odyssey", font_3, (255,55,200), 450, 228)
-                draw_text("Orion's Odyssey", font_3, (255,255,255), 450, 230)
-                draw_text("Epic", font_3, (255,55,200), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,55,200), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 200 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 840", font_3, (255,255,255), 150, 680)
-                draw_text("9", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-            
-
-            if gun_which == 23:
-                if guns_player_have[22] == 2 or guns_player_have[22] == 1:
-                    pass
-                elif money >= 900 and money_diamond >= 3:
-                    if button_buy.draw(screen):
-                        money -= 900
-                        money_diamond -= 3
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[22] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/23.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(50, 350))
-                draw_text("Interstellar Hunter", font_3, (255,55,200), 450, 228)
-                draw_text("Interstellar Hunter", font_3, (255,255,255), 450, 230)
-                draw_text("Epic", font_3, (255,55,200), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,55,200), 0, 802)
-                draw_text("- 1 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 320 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 900", font_3, (255,255,255), 150, 680)
-                draw_text("3", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 24:
-                if guns_player_have[23] == 2 or guns_player_have[23] == 1:
-                    pass
-                elif money >= 700 and money_diamond >= 3:
-                    if button_buy.draw(screen):
-                        money -= 700
-                        money_diamond -= 3
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[23] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/24.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Each round, the weapon's stats", font_4, (255,0,90), 580, 88)
-                draw_text("change to the stats shown below", font_4, (255,0,90), 573, 128)
-                draw_text("Galactic Gauss Random Gun", font_3, (255,0,90), 450, 228)
-                draw_text("Galactic Gauss Random Gun", font_3, (255,255,255), 450, 230)
-                draw_text("unique", font_3, (255,0,90), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (255,0,90), 0, 802)
-                draw_text("- 20/30/40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1/2/5 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 100/200/400 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.5/1/1.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 700", font_3, (255,255,255), 150, 680)
-                draw_text("3", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(390, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-
-            if gun_which == 25:
-                if guns_player_have[24] == 2 or guns_player_have[24] == 1:
-                    pass
-                elif money >= 1200 and money_diamond >= 6:
-                    if button_buy.draw(screen):
-                        money -= 1200
-                        money_diamond -= 6
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[24] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/25.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Supernova Sights", font_3, (235, 186, 52), 450, 228)
-                draw_text("Supernova Sights", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 2 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 280 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.4 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 1200", font_3, (255,255,255), 135, 680)
-                draw_text("6", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 26:
-                if guns_player_have[25] == 2 or guns_player_have[25] == 1:
-                    pass
-                elif money >= 1010 and money_diamond >= 4:
-                    if button_buy.draw(screen):
-                        money -= 1010
-                        money_diamond -= 4
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[25] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/26.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Comet Carver", font_3, (235, 186, 52), 450, 228)
-                draw_text("Comet Carver", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 5 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 300 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 3 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 1010", font_3, (255,255,255), 135, 680)
-                draw_text("4", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-            if gun_which == 27:
-                if guns_player_have[26] == 2 or guns_player_have[26] == 1:
-                    pass
-                elif money >= 1400 and money_diamond >= 1:
-                    if button_buy.draw(screen):
-                        money -= 1400
-                        money_diamond -= 1
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[26] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/27.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Starry Siege", font_3, (235, 186, 52), 450, 228)
-                draw_text("Starry Siege", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 320 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 2 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 1400", font_3, (255,255,255), 135, 680)
-                draw_text("1", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-            if gun_which == 28:
-                if guns_player_have[27] == 2 or guns_player_have[27] == 1:
-                    pass
-                elif money >= 1620 and money_diamond >= 4:
-                    if button_buy.draw(screen):
-                        money -= 1620
-                        money_diamond -= 4
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[27] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/28.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Interstellar Interceptor", font_3, (235, 186, 52), 450, 228)
-                draw_text("Interstellar Interceptor", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 16 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 4 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 350 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 1620", font_3, (255,255,255), 135, 680)
-                draw_text("4", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 29:
-                if guns_player_have[28] == 2 or guns_player_have[28] == 1:
-                    pass
-                elif money >= 1720 and money_diamond >= 8:
-                    if button_buy.draw(screen):
-                        money -= 1720
-                        money_diamond -= 8
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[28] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/29.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Asteroid Artillery", font_3, (235, 186, 52), 450, 228)
-                draw_text("Asteroid Artillery", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 20 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 300 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1.5 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 1720", font_3, (255,255,255), 135, 680)
-                draw_text("8", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 30:
-                if guns_player_have[29] == 2 or guns_player_have[29] == 1:
-                    pass
-                elif money >= 2320 and money_diamond >= 5:
-                    if button_buy.draw(screen):
-                        money -= 2320
-                        money_diamond -= 5
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[29] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/30.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Nebula Nuke", font_3, (235, 186, 52), 450, 228)
-                draw_text("Nebula Nuke", font_3, (255,255,255), 450, 230)
-                draw_text("Legendary", font_3, (235, 186, 52), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (235,186,52), 0, 802)
-                draw_text("- 25 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 5 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 360 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 2320", font_3, (255,255,255), 135, 680)
-                draw_text("5", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-
-            if gun_which == 31:
-                if guns_player_have[30] == 2 or guns_player_have[30] == 1:
-                    pass
-                elif money >= 3640 and money_diamond >= 8:
-                    if button_buy.draw(screen):
-                        money -= 3640
-                        money_diamond -= 8
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[30] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/31.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Sagittarius Seeker", font_3, (52, 235, 222), 450, 228)
-                draw_text("Sagittarius Seeker", font_3, (255,255,255), 450, 230)
-                draw_text("absolute", font_3, (52, 235, 222), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (52,235,222), 0, 802)
-                draw_text("- 1 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 490 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.8 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 3640", font_3, (255,255,255), 135, 680)
-                draw_text("8", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 32:
-                if guns_player_have[31] == 2 or guns_player_have[31] == 1:
-                    pass
-                elif money >= 5220 and money_diamond >= 9:
-                    if button_buy.draw(screen):
-                        money -= 5220
-                        money_diamond -= 9
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[31] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/32.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Polaris Missiles", font_3, (52, 235, 222), 450, 228)
-                draw_text("Polaris Missiles", font_3, (255,255,255), 450, 230)
-                draw_text("absolute", font_3, (52, 235, 222), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (52,235,222), 0, 802)
-                draw_text("- 45 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 430 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 5220", font_3, (255,255,255), 135, 680)
-                draw_text("9", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-            if gun_which == 33:
-                if guns_player_have[32] == 2 or guns_player_have[32] == 1:
-                    pass
-                elif money >= 5760 and money_diamond >= 9:
-                    if button_buy.draw(screen):
-                        money -= 5760
-                        money_diamond -= 9
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[32] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/33.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Photon Blaster", font_3, (52, 235, 222), 450, 228)
-                draw_text("Photon Blaster", font_3, (255,255,255), 450, 230)
-                draw_text("absolute", font_3, (52, 235, 222), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (52,235,222), 0, 802)
-                draw_text("- 10 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 480 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 5760", font_3, (255,255,255), 135, 680)
-                draw_text("9", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-            if gun_which == 34:
-                if guns_player_have[33] == 2 or guns_player_have[33] == 1:
-                    pass
-                elif money >= 5620 and money_diamond >= 9:
-                    if button_buy.draw(screen):
-                        money -= 5620
-                        money_diamond -= 9
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[33] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/34.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Ion Storm Rifle", font_3, (52, 235, 222), 450, 228)
-                draw_text("Ion Storm Rifle", font_3, (255,255,255), 450, 230)
-                draw_text("absolute", font_3, (52, 235, 222), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (52,235,222), 0, 802)
-                draw_text("- 40 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- burst shooting", font_3, (255,255,255), 450, 400)
-                draw_text("- 400 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 1 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 5620", font_3, (255,255,255), 135, 680)
-                draw_text("9", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
-
-            if gun_which == 35:
-                if guns_player_have[34] == 2 or guns_player_have[34] == 1:
-                    pass
-                elif money >= 9000 and money_diamond >= 9:
-                    if button_buy.draw(screen):
-                        money -= 9000
-                        money_diamond -= 9
-                        guns_player_have[guns_player_have.index(2)] = 1
-                        guns_player_have[34] = 2
-                else:
-                    draw_text("You can't buy it!", font_3, (255,255,255), 670, 680)
-
-                gun = pygame.image.load(f"project-VAK/img/gui/guns/35.png").convert_alpha()
-                gun = pygame.transform.scale(gun, (int(gun.get_width() * 13), int(gun.get_height() * 13)))
-                screen.blit(gun,(0, 250))
-                draw_text("Comet Carnage", font_3, (52, 235, 222), 450, 228)
-                draw_text("Comet Carnage", font_3, (255,255,255), 450, 230)
-                draw_text("absolute", font_3, (52, 235, 222), 450, 280)
-                draw_text("----------------------------------------------------------------------------------", font_4, (52,235,222), 0, 802)
-                draw_text("- 1 charges", font_3, (255,255,255), 450, 350)
-                draw_text("- 1 per shoot", font_3, (255,255,255), 450, 400)
-                draw_text("- 700 damage", font_3, (255,255,255), 450, 450)
-                draw_text("- 0.4 Speed", font_3, (255,255,255), 450, 500)
-                draw_text("Cost: 9000", font_3, (255,255,255), 135, 680)
-                draw_text("9", font_3, (255,255,255), 520, 680)
-                screen.blit(money_im_sml,(415, 660))
-                screen.blit(diamond_im_sml,(560, 660))
-
+                
         if back_button.draw(screen):
             start_intro = True
             intro_fade.fade_counter = 0
@@ -2336,7 +870,7 @@ while run:
                 if event.key == pygame.K_ESCAPE:
                     run = False
 
-
+    #
     if current_window_selected == "food":
 
         is_moving_left = False
@@ -2419,17 +953,11 @@ while run:
         draw_text(f"{big_fruit}", font_3, (255,255,255), 990, 48)
         if money >= 56:
             buy_b_for_small.draw(screen)
-        else:
-            draw_text("you can't buy it", font_4, (255,255,255), 75, 738)
         if money >= 355:
             buy_b_for_good.draw(screen)
-        else:
-            draw_text("you can't buy it", font_4, (255,255,255), 435, 738)
         if money_diamond >= 5:
             buy_b_for_best.draw(screen)
-        else:
-            draw_text("you can't buy it", font_4, (255,255,255), 758, 738)
-
+        
         if buy_b_for_small.clicked is True:
             if make_action < 1:
                 make_action += 1
@@ -2448,49 +976,6 @@ while run:
                 big_fruit += 1
         else:
             make_action = 0
-            
-        if start_intro == True:
-            if shop_fade.fade():
-                start_intro = False
-                shop_fade.fade_counter = 0 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
-    
-    if current_window_selected == "skill":
-        is_moving_left = False
-        is_moving_right = False
-        back_shop = pygame.image.load("project-VAK/img/gui/shops_back/skills.png").convert_alpha()
-        back_shop = pygame.transform.scale(back_shop, (int(back_shop.get_width() * 2.8), int(back_shop.get_height() * 2.8)))
-        screen.blit(back_shop, (650,0))
-        screen.blit(back_shop, (-180,0))
-        Jenifer.update()
-        Jenifer.draw(screen, 860, -90)
-        back_im = pygame.image.load("project-VAK/img/gui/button_back_for_skill.png").convert_alpha()
-        back_im_s = pygame.image.load("project-VAK/img/gui/button_back_for_skill_select.png").convert_alpha()
-        back_button = Button(1430, 20, back_im, 5, back_im_s)
-        table_im = pygame.image.load("project-VAK/img/gui/shops_back/skills_table.png").convert_alpha()
-        table_im = pygame.transform.scale(table_im, (int(table_im.get_width() * 9), int(table_im.get_height() * 8.35)))
-        sml_button_empty = pygame.image.load("project-VAK/img/gui/empty_small.png").convert_alpha()
-        sml_button_empty = pygame.transform.scale(sml_button_empty, (int(sml_button_empty.get_width() * 1), int(sml_button_empty.get_height() * 1)))
-        sml_button_clossed = pygame.image.load("project-VAK/img/gui/closed_small.png").convert_alpha()
-        sml_button_clossed = pygame.transform.scale(sml_button_clossed, (int(sml_button_clossed.get_width() * 1), int(sml_button_clossed.get_height() * 1)))
-        sml_button_yes = pygame.image.load("project-VAK/img/gui/yes_small.png").convert_alpha()
-        sml_button_yes = pygame.transform.scale(sml_button_yes, (int(sml_button_yes.get_width() * 1), int(sml_button_yes.get_height() * 1)))
-        sml_button_no = pygame.image.load("project-VAK/img/gui/no_small.png").convert_alpha()
-        sml_button_no = pygame.transform.scale(sml_button_no, (int(sml_button_no.get_width() * 1), int(sml_button_no.get_height() * 1)))
-        screen.blit(table_im, (-120,-15))
-
-        if back_button.draw(screen):
-            start_intro = True
-            intro_fade.fade_counter = 0
-            shop_fade.fade_counter = 0
-            flag_shop = 1
-            current_window_selected = "home"
-            city_noise.play(-1)
             
         if start_intro == True:
             if shop_fade.fade():
@@ -2690,7 +1175,7 @@ while run:
                     is_moving_up = False
                 if event.key == pygame.K_s:
                     is_moving_down = False
-    
+    #
     if current_window_selected == "credits":
         color_menu()
         brown_cat.update()
@@ -2727,5 +1212,6 @@ while run:
                 if event.key == pygame.K_ESCAPE:
                     run = False
     pygame.display.update()
+
 
 pygame.quit()
