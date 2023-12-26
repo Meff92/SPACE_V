@@ -10,12 +10,11 @@ pygame.init()
 info = pygame.display.Info()
 SCREEN_WIDTH = 1536
 SCREEN_HEIGHT = 864
-SCREEN_WIDTH_19 = 1980
-SCREEN_HEIGHT_19 = 864
+
 
 print(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1536, 864),pygame.FULLSCREEN)
 pygame.display.set_caption('SPACE-V')
 
 # Time
@@ -317,7 +316,7 @@ white_cat = Animate_smt(100, 15, "gui/white_cat/white_grey", False, 5, 5)
 brown_cat = Animate_smt(50, 5, "gui/brown_cat/brown", False, 5, 5)
 
 Jack = Animate_smt(10, 4, "gui/Jack_guns/Idle", False, 12, 12)
-Jenifer = Animate_smt(10, 4, "gui/Jenifer_skills/Idle-", False, 8, 8)
+Jenifer = Animate_smt(20, 4, "gui/Jenifer_skills/Idle-", False, 15, 15)
 Robert = Animate_smt(10, 4, "gui/Robert_junk/big_demon_idle_anim_f", False, 8, 8)
 Alla = Animate_smt(15, 8, "gui/Alla_food/balancing", False, 15, 15)
 
@@ -412,12 +411,12 @@ class ScreenFade():
         self.fade_counter += self.speed
         if self.direc == 1:
             pygame.draw.rect(screen, self.clr, (0 - self.fade_counter, 0, SCREEN_WIDTH//2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
+            pygame.draw.rect(screen, self.clr, (SCREEN_WIDTH//2 + 50 + self.fade_counter, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
         if self.direc == 2:
             pygame.draw.rect(screen, self.clr, (0,0, SCREEN_WIDTH, 0 + self.fade_counter))
         if self.direc == 3:
             pygame.draw.rect(screen, self.clr, (0 - self.fade_counter * 7, 0, SCREEN_WIDTH//2, SCREEN_HEIGHT + 300))
-            pygame.draw.rect(screen, self.clr, (768 + self.fade_counter * 7, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
+            pygame.draw.rect(screen, self.clr, (SCREEN_WIDTH//2 + 50 + self.fade_counter * 7, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 300))
         if self.fade_counter > SCREEN_WIDTH - 500:
             fade_complete = True
         
@@ -427,8 +426,8 @@ intro_fade = ScreenFade(1, (0,0,0), 4)
 death_fade = ScreenFade(2, (0,0,0), 4)
 shop_fade = ScreenFade(3, (0,0,0), 4)
 
-money = 5000
-money_diamond = 500
+money = 2
+money_diamond = 2
 ship_level = 6
 bar_of_volume_game_music = 0
 bar_of_volume_game_sounds = 5
@@ -529,8 +528,9 @@ while run:
         clock.tick(FPS)
         back_ground_for_home = pygame.image.load("project-VAK/img/gui/menu_in_play.png").convert_alpha()
         back_ground_for_home = pygame.transform.scale(back_ground_for_home, (int(back_ground_for_home.get_width() * 4), int(back_ground_for_home.get_height() * 5.1)))
-        screen.blit(back_ground_for_home, (0,12))
+        pygame.draw.rect(screen, (0,0,0), (-20, 0, 2500, 2600))
         screen.blit(back_ground_for_home, (0,-80))
+        
         if ship_level == 1:
             ship_im = pygame.image.load("project-VAK/img/gui/ships/ship1.png").convert_alpha()
             ship_im = pygame.transform.scale(ship_im, (int(ship_im.get_width() * 4), int(ship_im.get_height() * 4)))
@@ -566,6 +566,7 @@ while run:
 
         if player_for_menu.rect.x >= 500 and player_for_menu.rect.x <= 590:
             draw_text("PRESS SPACE TO FLY INTO THE SPACE", font_4, (255,255,255), 20, 12)
+            enter_shop = "play on planet"
         if player_for_menu.rect.x >= 5 and player_for_menu.rect.x <= 95:
             draw_text("PRESS SPACE TO ENTER THE WEAPONS STORE", font_4, (255,255,255), 20, 12)
             enter_shop = "weapons"
@@ -621,6 +622,8 @@ while run:
                     is_moving_left = True
                 if event.key == pygame.K_d:
                     is_moving_right = True
+                if event.key == pygame.K_s:
+                    is_moving_down = True
                 if event.key == pygame.K_ESCAPE:
                     run = False
                 if event.key == pygame.K_SPACE:
@@ -631,6 +634,8 @@ while run:
                         current_window_selected = enter_shop
                         city_noise.stop()
             if event.type == pygame.KEYUP:
+                if event.key == pygame.K_s:
+                    is_moving_down = False
                 if event.key == pygame.K_a:
                     is_moving_left = False
                 if event.key == pygame.K_d:
@@ -2414,11 +2419,17 @@ while run:
         draw_text(f"{big_fruit}", font_3, (255,255,255), 990, 48)
         if money >= 56:
             buy_b_for_small.draw(screen)
+        else:
+            draw_text("you can't buy it", font_4, (255,255,255), 75, 738)
         if money >= 355:
             buy_b_for_good.draw(screen)
+        else:
+            draw_text("you can't buy it", font_4, (255,255,255), 435, 738)
         if money_diamond >= 5:
             buy_b_for_best.draw(screen)
-        
+        else:
+            draw_text("you can't buy it", font_4, (255,255,255), 758, 738)
+
         if buy_b_for_small.clicked is True:
             if make_action < 1:
                 make_action += 1
@@ -2437,6 +2448,49 @@ while run:
                 big_fruit += 1
         else:
             make_action = 0
+            
+        if start_intro == True:
+            if shop_fade.fade():
+                start_intro = False
+                shop_fade.fade_counter = 0 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+    
+    if current_window_selected == "skill":
+        is_moving_left = False
+        is_moving_right = False
+        back_shop = pygame.image.load("project-VAK/img/gui/shops_back/skills.png").convert_alpha()
+        back_shop = pygame.transform.scale(back_shop, (int(back_shop.get_width() * 2.8), int(back_shop.get_height() * 2.8)))
+        screen.blit(back_shop, (650,0))
+        screen.blit(back_shop, (-180,0))
+        Jenifer.update()
+        Jenifer.draw(screen, 860, -90)
+        back_im = pygame.image.load("project-VAK/img/gui/button_back_for_skill.png").convert_alpha()
+        back_im_s = pygame.image.load("project-VAK/img/gui/button_back_for_skill_select.png").convert_alpha()
+        back_button = Button(1430, 20, back_im, 5, back_im_s)
+        table_im = pygame.image.load("project-VAK/img/gui/shops_back/skills_table.png").convert_alpha()
+        table_im = pygame.transform.scale(table_im, (int(table_im.get_width() * 9), int(table_im.get_height() * 8.35)))
+        sml_button_empty = pygame.image.load("project-VAK/img/gui/empty_small.png").convert_alpha()
+        sml_button_empty = pygame.transform.scale(sml_button_empty, (int(sml_button_empty.get_width() * 1), int(sml_button_empty.get_height() * 1)))
+        sml_button_clossed = pygame.image.load("project-VAK/img/gui/closed_small.png").convert_alpha()
+        sml_button_clossed = pygame.transform.scale(sml_button_clossed, (int(sml_button_clossed.get_width() * 1), int(sml_button_clossed.get_height() * 1)))
+        sml_button_yes = pygame.image.load("project-VAK/img/gui/yes_small.png").convert_alpha()
+        sml_button_yes = pygame.transform.scale(sml_button_yes, (int(sml_button_yes.get_width() * 1), int(sml_button_yes.get_height() * 1)))
+        sml_button_no = pygame.image.load("project-VAK/img/gui/no_small.png").convert_alpha()
+        sml_button_no = pygame.transform.scale(sml_button_no, (int(sml_button_no.get_width() * 1), int(sml_button_no.get_height() * 1)))
+        screen.blit(table_im, (-120,-15))
+
+        if back_button.draw(screen):
+            start_intro = True
+            intro_fade.fade_counter = 0
+            shop_fade.fade_counter = 0
+            flag_shop = 1
+            current_window_selected = "home"
+            city_noise.play(-1)
             
         if start_intro == True:
             if shop_fade.fade():
