@@ -542,51 +542,49 @@ while run:
     
         player_for_menu.update()
         player_for_menu.draw()
-
+        
         y_for_ship_pos_for_menu += floating_ship_speed
         if y_for_ship_pos_for_menu >= 525:
             floating_ship_speed = -floating_ship_speed
         if y_for_ship_pos_for_menu <= 535:
             floating_ship_speed = -floating_ship_speed
 
-        if 500 <= player_for_menu.rect.x <= 590:
+        if player_for_menu.rect.x >= 500 and player_for_menu.rect.x <= 590:
             draw_text("PRESS SPACE TO FLY INTO THE SPACE", font_4, (255,255,255), 20, 12)
-        if 5 <= player_for_menu.rect.x <= 95:
+        if player_for_menu.rect.x >= 5 and player_for_menu.rect.x <= 95:
             draw_text("PRESS SPACE TO ENTER THE WEAPONS STORE", font_4, (255,255,255), 20, 12)
             enter_shop = "weapons"
-        if 850 <= player_for_menu.rect.x <= 1170:
+        if player_for_menu.rect.x >= 850 and player_for_menu.rect.x <= 1170:
             draw_text("PRESS SPACE TO ENTER THE FOOD SHOP", font_4, (255,255,255), 20, 12)
             enter_shop = "food"
-        if 1233 <= player_for_menu.rect.x <= 1310:
+        if player_for_menu.rect.x >= 1233 and player_for_menu.rect.x <= 1310:
             draw_text("PRESS SPACE TO ENTER THE 'JUNK' STORE", font_4, (255,255,255), 20, 12)
             enter_shop = "junk"
-        if 1400 <= player_for_menu.rect.x <= 1493:
+        if player_for_menu.rect.x >= 1400 and player_for_menu.rect.x <= 1493:
             draw_text("PRESS SPACE TO ENTER THE SKILL STORE", font_4, (255,255,255), 20, 12)
             enter_shop = "skill"
-
         arrow = pygame.image.load("project-VAK/img/gui/strelka.png").convert_alpha()
-        arrow = pygame.transform.scale(arrow, (int(arrow.get_width() * 6), int(arrow.get_height() * 6)))
-        screen.blit(arrow, (70, arrow_pos))
-        screen.blit(arrow, (580, arrow_pos))
-        screen.blit(arrow, (1050, arrow_pos))
-        screen.blit(arrow, (1287, arrow_pos))
-        screen.blit(arrow, (1485, arrow_pos))
+        arrow = pygame.transform.scale(arrow, (int(arrow .get_width() * 6), int(arrow .get_height() * 6)))
+        screen.blit(arrow , (70, arrow_pos))
+        screen.blit(arrow , (580, arrow_pos))
+        screen.blit(arrow , (1050, arrow_pos))
+        screen.blit(arrow , (1287, arrow_pos))
+        screen.blit(arrow , (1485, arrow_pos))
         arrow_pos += floating_arrow_speed
         if arrow_pos >= 824:
             floating_arrow_speed = -floating_arrow_speed
         if arrow_pos <= 832:
             floating_arrow_speed = -floating_arrow_speed
-
-        if start_intro:
-            if flag_shop != 1:
-                if intro_fade.fade():
-                    start_intro = False
-                    intro_fade.fade_counter = 0
-            else:
-                if shop_fade.fade():
-                    start_intro = False
-                    shop_fade.fade_counter = 0
-
+        if start_intro == True:
+                if flag_shop != 1:
+                    if intro_fade.fade():
+                        start_intro = False
+                        intro_fade.fade_counter = 0
+                else:
+                    if shop_fade.fade():
+                        start_intro = False
+                        shop_fade.fade_counter = 0
+        
         if player_for_menu.is_alive:
             if is_moving_left or is_moving_right or is_moving_down or is_moving_up:
                 if (is_moving_left and is_moving_right) and not is_moving_up and not is_moving_down:
@@ -611,7 +609,7 @@ while run:
                 if event.key == pygame.K_ESCAPE:
                     run = False
                 if event.key == pygame.K_SPACE:
-                    if enter_shop:
+                    if enter_shop != None:
                         start_intro = True
                         intro_fade.fade_counter = 0
                         shop_fade.fade_counter = 0
@@ -650,395 +648,36 @@ while run:
         move_for_guns = 170
         # кнопки для покупки тут как много ща будет
         if page == 1:
-            for i in range(len(guns_player_have) - 17):
-                    if i == 0:
-                        if guns_player_have[i] == 2:
-                            b1 = Button(14, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b1 = Button(14, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b1 = Button(14, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 1:
-                        if guns_player_have[i] == 2:
-                            b2 = Button(164, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b2 = Button(164, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b2 = Button(164, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 2:
-                        if guns_player_have[i] == 2:
-                            b3 = Button(334,110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b3 = Button(334, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b3 = Button(334, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 3:
-                        if guns_player_have[i] == 2:
-                            b4 = Button(494, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b4 = Button(494, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b4 = Button(494, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 4:
-                        if guns_player_have[i] == 2:
-                            b5 = Button(655, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b5 = Button(655, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b5 = Button(655, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 5:
-                        if guns_player_have[i] == 2:
-                            b6 = Button(865, 110, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b6 = Button(865, 110, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b6 = Button(865, 110, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
+            button_positions = [
+    (14, 110), (164, 110), (334, 110), (494, 110), (655, 110), (865, 110),
+    (14, 320), (184, 320), (344, 320), (564, 320), (744, 320), (914, 320),
+    (14, 540), (174, 540), (344, 540), (534, 540), (684, 540), (884, 540),
+    (10, 740), (170, 740), (344, 740), (514, 740), (684, 740), (864, 740)
+]
 
-                    if i == 6:
-                        if guns_player_have[i] == 2:
-                            b7 = Button(14, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b7 = Button(14, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b7 = Button(14, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 7:
-                        if guns_player_have[i] == 2:
-                            b8 = Button(184, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b8 = Button(184, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b8 = Button(184, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 8:
-                        if guns_player_have[i] == 2:
-                            b9 = Button(344, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b9 = Button(344, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b9 = Button(344, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 9:
-                        if guns_player_have[i] == 2:
-                            b10 = Button(564, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b10 = Button(564, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b10 = Button(564, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 10:
-                        if guns_player_have[i] == 2:
-                            b11 = Button(744, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b11 = Button(744, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b11 = Button(744, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed) 
-                    if i == 11:
-                        if guns_player_have[i] == 2:
-                            b12 = Button(914, 320, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b12 = Button(914, 320, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b12 = Button(914, 320, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)    
+            for i, (x, y) in enumerate(button_positions):
+                index = i % len(guns_player_have)
+                if guns_player_have[index] == 2:
+                    button = Button(x, y, sml_button_yes, 7, sml_button_yes, sml_button_yes)
+                elif guns_player_have[index] == 1:
+                    button = Button(x, y, sml_button_empty, 7, sml_button_empty, sml_button_empty)
+                else:
+                    button = Button(x, y, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
 
-                    if i == 12:
-                        if guns_player_have[i] == 2:
-                            b13 = Button(14, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b13 = Button(14, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b13 = Button(14, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 13:
-                        if guns_player_have[i] == 2:
-                            b14 = Button(174, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b14 = Button(174, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b14 = Button(174, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 14:
-                        if guns_player_have[i] == 2:
-                            b15 = Button(344, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b15 = Button(344, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b15 = Button(344, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 15:
-                        if guns_player_have[i] == 2:
-                            b16= Button(534, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b16 = Button(534, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b16 = Button(534, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 16:
-                        if guns_player_have[i] == 2:
-                            b17 = Button(684, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b17 = Button(684, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b17 = Button(684, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 17:
-                        if guns_player_have[i] == 2:
-                            b18 = Button(884, 540, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b18 = Button(884, 540, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b18 = Button(884, 540, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
+                locals()[f'b{i + 1}'] = button
 
-                    if i == 18:
-                        if guns_player_have[i] == 2:
-                            b19 = Button(10, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b19 = Button(10, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b19 = Button(10, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 19:
-                        if guns_player_have[i] == 2:
-                            b20 = Button(170, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b20 = Button(170, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b20 = Button(170, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 20:
-                        if guns_player_have[i] == 2:
-                            b21 = Button(344, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b21 = Button(344, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b21 = Button(344, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 21:
-                        if guns_player_have[i] == 2:
-                            b22 = Button(514, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b22 = Button(514, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b22 = Button(514, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 22:
-                        if guns_player_have[i] == 2:
-                            b23 = Button(684, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b23 = Button(684, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b23 = Button(684, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-                    if i == 23:
-                        if guns_player_have[i] == 2:
-                            b24 = Button(864, 740, sml_button_yes, 7, sml_button_yes, sml_button_yes)
-                        if guns_player_have[i] == 1:
-                            b24 = Button(864, 740, sml_button_empty, 7, sml_button_empty, sml_button_empty)
-                        if guns_player_have[i] == 0:
-                            b24 = Button(864, 740, sml_button_clossed, 7, sml_button_clossed, sml_button_clossed)
-            if b1.draw(screen):
-                if guns_player_have[0] == 0:
-                    page = 3
-                    gun_which = 1
-                if guns_player_have[0] == 1 or guns_player_have[0] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[0] = 2
-                    page = 3
-                    gun_which = 1
-            if b2.draw(screen):
-                if guns_player_have[1] == 0:
-                    page = 3
-                    gun_which = 2
-                if guns_player_have[1] == 1 or guns_player_have[1] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[1] = 2
-                    page = 3
-                    gun_which = 2
-            if b3.draw(screen):
-                if guns_player_have[2] == 0 :
-                    page = 3
-                    gun_which = 3
-                if guns_player_have[2] == 1 or guns_player_have[2] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[2] = 2
-                    page = 3
-                    gun_which = 3
-            if b4.draw(screen):
-                if guns_player_have[3] == 0 or guns_player_have[3] == 2:
-                    page = 3
-                    gun_which = 4
-                if guns_player_have[3] == 1:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[3] = 2
-                    page = 3
-                    gun_which = 4
-            if b5.draw(screen):
-                if guns_player_have[4] == 0:
-                    page = 3
-                    gun_which = 5
-                if guns_player_have[4] == 1 or guns_player_have[4] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[4] = 2
-                    page = 3
-                    gun_which = 5
-            if b6.draw(screen):
-                if guns_player_have[5] == 0:
-                    page = 3
-                    gun_which = 6
-                if guns_player_have[5] == 1 or guns_player_have[4] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[5] = 2
-                    page = 3
-                    gun_which = 6
+                
+            for i in range(24):
+                if globals()[f"b{i+1}"].draw(screen):
+                    if guns_player_have[i] == 0 or guns_player_have[i] == 2:
+                        page = 3
+                        gun_which = i + 1
+                    elif guns_player_have[i] == 1:
+                        guns_player_have[guns_player_have.index(2)] = 1
+                        guns_player_have[i] = 2
+                        page = 3
+                        gun_which = i + 1
 
-            if b7.draw(screen):
-                if guns_player_have[6] == 0:
-                    page = 3
-                    gun_which = 7
-                if guns_player_have[6] == 1 or guns_player_have[6] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[6] = 2
-                    page = 3
-                    gun_which = 7 
-            if b8.draw(screen):
-                if guns_player_have[7] == 0:
-                    page = 3
-                    gun_which = 8
-                if guns_player_have[7] == 1:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[7] = 2
-                    page = 3
-                    gun_which = 8
-            if b9.draw(screen):
-                if guns_player_have[8] == 0:
-                    page = 3
-                    gun_which = 9
-                if guns_player_have[8] == 1 or guns_player_have[8] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[8] = 2
-                    page = 3
-                    gun_which = 9
-            if b10.draw(screen):
-                if guns_player_have[9] == 0:
-                    page = 3
-                    gun_which = 10
-                if guns_player_have[9] == 1 or guns_player_have[8] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[9] = 2
-                    page = 3
-                    gun_which = 10
-            if b11.draw(screen):
-                if guns_player_have[10] == 0:
-                    page = 3
-                    gun_which = 11
-                if guns_player_have[10] == 1 or guns_player_have[10] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[10] = 2
-                    page = 3
-                    gun_which = 11
-            if b12.draw(screen):
-                if guns_player_have[11] == 0:
-                    page = 3
-                    gun_which = 12
-                if guns_player_have[11] == 1 or guns_player_have[11] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[11] = 2
-                    page = 3
-                    gun_which = 12
-            if b13.draw(screen):
-                if guns_player_have[12] == 0 :
-                    page = 3
-                    gun_which = 13
-                if guns_player_have[12] == 1 or guns_player_have[12] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[12] = 2
-                    page = 3
-                    gun_which = 13
-            if b14.draw(screen):
-                if guns_player_have[13] == 0:
-                    page = 3
-                    gun_which = 14
-                if guns_player_have[13] == 1 or guns_player_have[13] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[13] = 2
-                    page = 3
-                    gun_which = 14
-            if b15.draw(screen):
-                if guns_player_have[14] == 0:
-                    page = 3
-                    gun_which = 15
-                if guns_player_have[14] == 1 or guns_player_have[14] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[14] = 2
-                    page = 3
-                    gun_which = 15
-            if b16.draw(screen):
-                if guns_player_have[15] == 0:
-                    page = 3
-                    gun_which = 16
-                if guns_player_have[15] == 1 or guns_player_have[15] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[15] = 2
-                    page = 3
-                    gun_which = 16
-            if b17.draw(screen):
-                if guns_player_have[16] == 0 :
-                    page = 3
-                    gun_which = 17
-                if guns_player_have[16] == 1 or guns_player_have[16] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[16] = 2
-                    page = 3
-                    gun_which = 17
-            if b18.draw(screen):
-                if guns_player_have[17] == 0:
-                    page = 3
-                    gun_which = 18
-                if guns_player_have[17] == 1 or guns_player_have[17] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[17] = 2
-                    page = 3
-                    gun_which = 18
-            if b19.draw(screen):
-                if guns_player_have[18] == 0:
-                    page = 3
-                    gun_which = 19
-                if guns_player_have[18] == 1 or guns_player_have[18] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[18] = 2                    
-                    page = 3
-                    gun_which = 19
-            if b20.draw(screen):
-                if guns_player_have[19] == 0 :
-                    page = 3
-                    gun_which = 20
-                if guns_player_have[19] == 1 or guns_player_have[19] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[19] = 2
-                    page = 3
-                    gun_which = 20
-            if b21.draw(screen):
-                if guns_player_have[20] == 0:
-                    page = 3
-                    gun_which = 21
-                if guns_player_have[20] == 1 or guns_player_have[20] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[20] = 2
-                    page = 3
-                    gun_which = 21
-            if b22.draw(screen):
-                if guns_player_have[21] == 0:
-                    page = 3
-                    gun_which = 22
-                if guns_player_have[21] == 1 or guns_player_have[21] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[21] = 2
-                    page = 3
-                    gun_which = 22
-            if b23.draw(screen):
-                if guns_player_have[22] == 0 :
-                    page = 3
-                    gun_which = 23
-                if guns_player_have[22] == 1 or guns_player_have[22] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[22] = 2
-                    page = 3
-                    gun_which = 23
-            if b24.draw(screen):
-                if guns_player_have[23] == 0 :
-                    page = 3
-                    gun_which = 24
-                if guns_player_have[23] == 1 or guns_player_have[23] == 2:
-                    guns_player_have[guns_player_have.index(2)] = 1
-                    guns_player_have[23] = 2
-                    page = 3
-                    gun_which = 24
 
             button_right_im = pygame.image.load("project-VAK/img/gui/button_right.png").convert_alpha()
             button_right_im_press = pygame.image.load("project-VAK/img/gui/button_right_press.png").convert_alpha()
