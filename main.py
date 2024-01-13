@@ -31,11 +31,16 @@ is_moving_up = False
 is_shooting = False
 is_using_grenade = False
 is_grenade_thrown = False
+is_using_grenade_el = False
+is_grenade_thrown_el = False
 
 # Images
 bullet_image = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
 grenade_image = pygame.image.load('project-VAK/img/shoot/grenade.png').convert_alpha()
 grenade_image = pygame.transform.scale(grenade_image, (int(grenade_image.get_width() * 4), int(grenade_image.get_height() * 4)))
+grenade_image_el = pygame.image.load('project-VAK/img/shoot/grenade_el.png').convert_alpha()
+grenade_image_el = pygame.transform.scale(grenade_image_el, (int(grenade_image_el.get_width() * 4), int(grenade_image_el.get_height() * 4)))
+
 grenade_image_for_gui = pygame.transform.scale(grenade_image, (int(grenade_image.get_width() * 4), int(grenade_image.get_height() * 4)))
 el_grenade_image = pygame.image.load('project-VAK/img/shoot/grenade_el.png').convert_alpha()
 el_grenade_image = pygame.transform.scale(el_grenade_image, (int(el_grenade_image.get_width() * 4), int(el_grenade_image.get_height() * 4)))
@@ -74,7 +79,7 @@ def get_angle_to_cursor(player_rect):
     return angle_deg
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale, speed, ammo, grenades):
+    def __init__(self, x, y, scale, speed, ammo, grenades, grenades_elect=3):
         pygame.sprite.Sprite.__init__(self)
         self.is_alive = True
         self.speed = speed
@@ -83,6 +88,7 @@ class Player(pygame.sprite.Sprite):
         self.shoot_cooldown = 0
         self.direction = 1
         self.grenades = grenades
+        self.grenades_elect = grenades_elect
         self.health = 100
         self.max_health = self.health
         self.v_vel = 0
@@ -106,7 +112,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
+        
 
     def shoot(self):
         if self.shoot_cooldown == 0 and self.ammo > 0:
@@ -204,51 +210,93 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Grenade(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction):
+    def __init__(self, x, y, direction, which=1):
         pygame.sprite.Sprite.__init__(self)
-        self.timer = 38
+        self.timer = 35
         self.v_vel = -11
-        self.speed = 7
-        self.image = grenade_image
+        self.speed = 11
+        if which == 1:
+            self.image = grenade_image
+        if which == 2:
+            self.image = grenade_image_el
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.direction = direction
-
+        self.which = which
     def update(self):
-        self.v_vel += 0.8
-        dx = self.direction * self.speed
-        dy = self.v_vel
-
-        if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
-            self.direction *= -1
+        if self.which == 1:
+            self.v_vel += 0.8
             dx = self.direction * self.speed
+            dy = self.v_vel
 
-        self.rect.x += dx
-        self.rect.y += dy
+            if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
+                self.direction *= -1
+                dx = self.direction * self.speed
 
-        self.timer -= 1.15
-        if self.timer <= 0:
-            self.kill()
-            explosion = Explosion(self.rect.x, self.rect.y, 6)
-            explosion_group.add(explosion)
+            self.rect.x += dx
+            self.rect.y += dy
 
-            if abs(self.rect.centerx - player.rect.centerx) < 90 and abs(
-                    self.rect.centery - player.rect.centery) < 90:
-                player.health -= 100
-            for enemy in enemies_group:
-                if abs(self.rect.centerx - enemy.rect.centerx) < 90 and abs(
-                        self.rect.centery - enemy.rect.centery) < 90:
-                    enemy.health -= 100
+            self.timer -= 1.15
+            if self.timer <= 0:
+                expl_sfx = pygame.mixer.Sound("project-VAK/img/sfx/game/explosion_big_01.wav")
+                expl_sfx.set_volume(volume_game_sound)
+                expl_sfx.play()
+                self.kill()
+                explosion = Explosion(self.rect.x, self.rect.y, 10)
+                explosion_group.add(explosion)
 
+                if abs(self.rect.centerx - player.rect.centerx) < 120 and abs(
+                        self.rect.centery - player.rect.centery) < 120:
+                    player.health -= 500
+                for enemy in enemies_group:
+                    if abs(self.rect.centerx - enemy.rect.centerx) < 120 and abs(
+                            self.rect.centery - enemy.rect.centery) < 120:
+                        enemy.health -= 500
+        if self.which == 2:
+                self.v_vel += 0.8
+                dx = self.direction * self.speed
+                dy = self.v_vel
+
+                if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
+                    self.direction *= -1
+                    dx = self.direction * self.speed
+
+                self.rect.x += dx
+                self.rect.y += dy
+
+                self.timer -= 1.15
+                print(self.timer)
+
+                    
+                if self.timer <= 0:
+                    expl_sfx = pygame.mixer.Sound("project-VAK/img/sfx/game/EL-blow_35.wav")
+                    expl_sfx.set_volume(volume_game_sound)
+                    expl_sfx.play()
+                    explosion = Explosion(self.rect.x, self.rect.y, 14, "project-VAK/img/exp/exp2/Explosion 2 SpriteSheet_")
+                    explosion_group.add(explosion)
+                    self.kill()
+                    if abs(self.rect.centerx - player.rect.centerx) < 180 and abs(
+                            self.rect.centery - player.rect.centery) < 180:
+                        player.health -= 1200
+                    for enemy in enemies_group:
+                        if abs(self.rect.centerx - enemy.rect.centerx) < 180 and abs(
+                                self.rect.centery - enemy.rect.centery) < 180:
+                            enemy.health -= 1200
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale):
+    def __init__(self, x, y, scale, deff_or_not = True, num_of_i = 18):
         pygame.sprite.Sprite.__init__(self)
         self.images = list()
-        for i in range(1, 9):
-            img = pygame.image.load(f'project-VAK/img/exp/explosion{i}.png').convert_alpha()
-            img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-            self.images.append(img)
+        if deff_or_not is True:
+            for i in range(1, 17):
+                img = pygame.image.load(f'project-VAK/img/exp/Explosion SpriteSheet_{i}.png').convert_alpha()
+                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                self.images.append(img)
+        else:
+            for i in range(7, num_of_i + 1):
+                img = pygame.image.load(f'{deff_or_not}{i}.png').convert_alpha()
+                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+                self.images.append(img)
         self.frame_index = 0
         self.image = self.images[self.frame_index]
         self.rect = self.image.get_rect()
@@ -307,10 +355,17 @@ sounds_group = list()
 
 player = Player(780, 460, 3, 5, 20, 5)
 player_for_menu = Player(500, 760, 2.7, 5, 20, 5)
-enemy = Player(400, 200, 3, 5, 20, 0)
-enemy1 = Player(400, 400, 3, 5, 20, 0)
+enemy = Player(400, 600, 3, 5, 20, 0)
+enemy1 = Player(300, 600, 3, 5, 20, 0)
+enemy2 = Player(200, 600, 3, 5, 20, 0)
+enemy3 = Player(700, 600, 3, 5, 20, 0)
+enemy4 = Player(800, 600, 3, 5, 20, 0)
+enemy5 = Player(900, 600, 3, 5, 20, 0)
 enemies_group.add(enemy)
 enemies_group.add(enemy1)
+enemies_group.add(enemy3)
+enemies_group.add(enemy4)
+enemies_group.add(enemy5)
 run = True
 
 stars = Animate_smt(random.randint(250, 280), 4, "gui/bg_men/menu_", True, 0.5, 0.5)
@@ -370,6 +425,8 @@ Valhalla3 = Animate_smt(60, 8, "gui/planets/five/Valhalla3/2403736513_", False, 
 Radiance4 = Animate_smt(60, 8, "gui/planets/five/Radiance4/2403736513_", False, 6, 6)
 
 PlanetV = Animate_smt(60, 8, "gui/planets/six/Planet V/2403736513_", False, 5, 5)
+
+PlanetV_back = Animate_smt(60, 9, "planets_play/six/back", False, 2, 2)
 
 
 
@@ -506,7 +563,14 @@ intro_fade = ScreenFade(1, (0,0,0), 4)
 death_fade = ScreenFade(2, (0,0,0), 4)
 shop_fade = ScreenFade(3, (0,0,0), 4)
 
-
+def gradientRect( window, left_colour, right_colour, target_rect, alpha=20):
+    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
+    colour_rect = pygame.Surface( (2, 2) )                                   # tiny! 2x2 bitmap
+    pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 0,1 ) )            # left colour line
+    pygame.draw.line( colour_rect, right_colour, ( 1,0 ), ( 1,1 ) )            # right colour line
+    colour_rect = pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) )  # stretch!
+    colour_rect.set_alpha(alpha)
+    window.blit(colour_rect, target_rect)    
 
 #---------------
 with open("project-VAK/save/saving.txt", "r") as f:
@@ -1989,8 +2053,8 @@ while run:
         if page == 60:
             color_menu()
 
-            galaxy_5_for_ui.update()
-            galaxy_5_for_ui.draw(screen, 10, 5)
+            galaxy_6_for_ui.update()
+            galaxy_6_for_ui.draw(screen, 10, 5)
             back_im = pygame.image.load("project-VAK/img/gui/button_back.png").convert_alpha()
             back_im_s = pygame.image.load("project-VAK/img/gui/button_back_select.png").convert_alpha()
             back_button = Button(30, 130, back_im, 4, back_im_s)
@@ -5358,8 +5422,6 @@ while run:
                 draw_text("perk", font_4, (255,255,255), 530, 350)
                 draw_text("you can throw electric grenades by pressing the v key", font_4, (255,255,255), 120, 420)
 
-                # running_pers.update()
-                # running_pers.draw(screen, 360, 480)
                 draw_text("- the number of grenades = 3", font_4, (255,255,255), 260, 530)
                 draw_text("- the damage from grenades = 1200", font_4, (255,255,255), 260, 590)
                 screen.blit(el_grenade_image_for_gui, (100, 490))
@@ -6764,12 +6826,83 @@ while run:
         health_bars = {75: "health_bar4.png", 40: "health_bar3.png", 10: "health_bar2.png", 0: "health_bar1.png",
                     -1: "health_bar0.png"}
         ammo_bars = {15: "ammo5.png", 10: "ammo4.png", 5: "ammo3.png", 1: "ammo2.png", 0: "ammo1.png", -1: "ammo0.png"}
-        back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Nova prime1/back1.png").convert_alpha()
-        back_ground_for_home = pygame.transform.scale(back_ground_for_home, (int(back_ground_for_home.get_width() * 3), int(back_ground_for_home.get_height() * 3)))
-        screen.blit(back_ground_for_home, (0,-120))
-        back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Nova prime1/ground1.png").convert_alpha()
-        back_ground_for_home = pygame.transform.scale(back_ground_for_home, (int(back_ground_for_home.get_width() * 3), int(back_ground_for_home.get_height() * 3)))
-        screen.blit(back_ground_for_home, (0,470))
+        
+        if planet_which_you_ch == 1:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Nova prime1/back1.png").convert_alpha()
+        if planet_which_you_ch == 2:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Astoria2/back1.png").convert_alpha()
+        if planet_which_you_ch == 3:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Olympus3/back1.png").convert_alpha()
+        if planet_which_you_ch == 4:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Nebulous4/back1.png").convert_alpha()
+        if planet_which_you_ch == 5:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/Infinity5/back1.png").convert_alpha()
+        if planet_which_you_ch == 6:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/second/Genesis1/back1.png").convert_alpha()
+        if planet_which_you_ch == 7:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/second/Equinox2/back1.png").convert_alpha()
+        if planet_which_you_ch == 8:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/second/Orpheus3/back1.png").convert_alpha()
+        if planet_which_you_ch == 9:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/second/Utopia4/back1.png").convert_alpha()
+        if planet_which_you_ch == 10:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/second/Nexus5/back1.png").convert_alpha()
+        if planet_which_you_ch == 11:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/third/Andromeda1/back1.png").convert_alpha()
+        if planet_which_you_ch == 12:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/third/Epoch2/back1.png").convert_alpha()
+        if planet_which_you_ch == 13:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/third/Arcadia3/back1.png").convert_alpha()
+        if planet_which_you_ch == 14:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/third/Apollo4/back1.png").convert_alpha()
+        if planet_which_you_ch == 15:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/third/Polaris5/back1.png").convert_alpha()
+        if planet_which_you_ch == 16:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/four/Ethereal1/back1.png").convert_alpha()
+        if planet_which_you_ch == 17:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/four/Soltisice2/back1.png").convert_alpha()
+        if planet_which_you_ch == 18:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/four/Scepter3/back1.png").convert_alpha()
+        if planet_which_you_ch == 19:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/four/Prisma4/back1.png").convert_alpha()
+        if planet_which_you_ch == 20:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/four/Fantsia5/back1.png").convert_alpha()
+        if planet_which_you_ch == 21:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/five/New Earth1/back1.png").convert_alpha()
+        if planet_which_you_ch == 22:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/five/Horizon2/back1.png").convert_alpha()
+        if planet_which_you_ch == 23:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/five/Valhalla3/back1.png").convert_alpha()
+        if planet_which_you_ch == 24:
+            back_ground_for_home = pygame.image.load("project-VAK/img/planets_play/five/Radiance4/back1.png").convert_alpha()
+        if planet_which_you_ch != 25:
+            back_ground_for_home = pygame.transform.scale(back_ground_for_home, (int(back_ground_for_home.get_width() * 2), int(back_ground_for_home.get_height() * 2)))
+            screen.blit(back_ground_for_home, (0,0))
+        if planet_which_you_ch == 25:
+            PlanetV_back.update()
+            PlanetV_back.draw(screen, 0,0)
+        if planet_which_you_ch == 3:
+            front1 = pygame.image.load(f"project-VAK/img/planets_play/Olympus3/front1.png").convert_alpha()
+            front1 = pygame.transform.scale(front1, (int(front1.get_width() * 3), int(front1.get_height() * 3)))
+            front2 = pygame.image.load(f"project-VAK/img/planets_play/Olympus3/front2.png").convert_alpha()
+            front2 = pygame.transform.scale(front2, (int(front2.get_width() * 3), int(front2.get_height() * 3)))
+            screen.blit(front2, (1490 , 385))
+            screen.blit(front1, (-120 , 585))
+        if planet_which_you_ch == 8:
+            front1 = pygame.image.load(f"project-VAK/img/planets_play/second/Orpheus3/front1.png").convert_alpha()
+            front1 = pygame.transform.scale(front1, (int(front1.get_width() * 16), int(front1.get_height() * 16)))
+            screen.blit(front1, (1300 , 55))
+            screen.blit(front1, (-670 , 55))
+        if planet_which_you_ch == 9:
+            front1 = pygame.image.load(f"project-VAK/img/planets_play/second/Utopia4/front1.png").convert_alpha()
+            front1 = pygame.transform.scale(front1, (int(front1.get_width() * 2), int(front1.get_height() * 2)))
+            front2 = pygame.image.load(f"project-VAK/img/planets_play/second/Utopia4/front2.png").convert_alpha()
+            front2 = pygame.transform.scale(front2, (int(front2.get_width() * 2), int(front2.get_height() * 2)))
+            screen.blit(front2, (-200 , 385))
+            screen.blit(front1, (1300 , 355))
+            screen.blit(front1, (900 , 655))
+            screen.blit(front2, (300 , 585))
+
         if start_intro == True:
             if intro_fade.fade():
                 start_intro = False
@@ -6802,12 +6935,14 @@ while run:
             draw_status_bar(player.ammo, ammo_bars, 940, 25)
             draw_text(f'HEALTH', font, (0, 0, 0), 1370, 15)
             draw_status_bar(player.health, health_bars, 1170, 23)
-            player.update()
-            player.draw()
 
             for enemy in enemies_group:
                 enemy.update()
                 enemy.draw()
+
+
+            player.update()
+            player.draw()
 
             bullet_group.update()
             grenade_group.update()
@@ -6826,6 +6961,13 @@ while run:
                     grenade_group.add(is_using_grenade)
                     player.grenades -= 1
                     is_grenade_thrown = True
+                elif is_using_grenade_el and not is_grenade_thrown_el and player.grenades_elect > 0:
+                    is_using_grenade_el = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction),
+                                            player.rect.top,
+                                            player.direction, which=2)
+                    grenade_group.add(is_using_grenade_el)
+                    player.grenades_elect -= 1
+                    is_grenade_thrown_el = True
                 if is_moving_left or is_moving_right or is_moving_down or is_moving_up:
                     if (is_moving_left and is_moving_right) and not is_moving_up and not is_moving_down:
                         player.update_action(0)
@@ -6837,25 +6979,104 @@ while run:
                     player.update_action(0)
                 player.move(is_moving_left, is_moving_right, is_moving_down, is_moving_up)
 
+            
+            if planet_which_you_ch == 3:
+                screen.blit(front2, (1490 , 385))
+                screen.blit(front1, (-120 , 585))
+            if planet_which_you_ch == 8:
+                screen.blit(front1, (1300 , 55))
+                screen.blit(front1, (-670 , 55))
+            if planet_which_you_ch == 9:
+                screen.blit(front2, (-200 , 385))
+                screen.blit(front1, (1300 , 355))
+                screen.blit(front1, (900 , 655))
+                screen.blit(front2, (300 , 585))
+        if planet_which_you_ch == 1:
+            gradientRect( screen, (86, 177, 219), (0, 0, 0), pygame.Rect( 0,0, 2000, 1400 ) )
+        if planet_which_you_ch == 2:
+            gradientRect( screen, (245, 126, 66), (138, 198, 235), pygame.Rect( 0,0, 2000, 1400 ), alpha=42)
+        if planet_which_you_ch == 3:
+            gradientRect( screen, (206, 219, 118), (207, 200, 19), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 4:
+            gradientRect( screen, (217, 145, 167), (186, 7, 61), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 5:
+            gradientRect( screen, (174, 224, 235), (204, 228, 240), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 6:
+            gradientRect( screen, (6, 35, 74), (0,0,0), pygame.Rect( 0,0, 2000, 1400 ), alpha=72)
+        if planet_which_you_ch == 7:
+            gradientRect( screen, (237, 245, 255), (255, 237, 244), pygame.Rect( 0,0, 2000, 1400 ), alpha=62)
+        if planet_which_you_ch == 8:
+            gradientRect( screen, (74, 102, 80), (0,0,0), pygame.Rect( 0,0, 2000, 1400 ), alpha=62)
+        if planet_which_you_ch == 9:
+            gradientRect( screen, (173, 66, 87), (0,0,0), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)  
+        if planet_which_you_ch == 10:
+            gradientRect( screen, (129, 199, 227), (237, 245, 247), pygame.Rect( 0,0, 2000, 1400 ), alpha=32) 
+        if planet_which_you_ch == 11:
+            gradientRect( screen, (0,0,0), (122, 22, 86), pygame.Rect( 0,0, 2000, 1400 ), alpha=42) 
+        if planet_which_you_ch == 12:
+            gradientRect( screen, (2, 8, 28), (18, 2, 46), pygame.Rect( 0,0, 2000, 1400 ), alpha=42) 
+        if planet_which_you_ch == 13:
+            gradientRect( screen, (84, 84, 84), (67, 60, 74), pygame.Rect( 0,0, 2000, 1400 ), alpha=42) 
+        if planet_which_you_ch == 14:
+            gradientRect( screen, (112, 71, 18), (57, 102, 81), pygame.Rect( 0,0, 2000, 1400 ), alpha=32)
+        if planet_which_you_ch == 15:
+            gradientRect( screen, (180, 198, 207), (223, 236, 237), pygame.Rect( 0,0, 2000, 1400 ), alpha=72)
+        if planet_which_you_ch == 16:
+            gradientRect( screen, (125, 88, 66), (18, 9, 1), pygame.Rect( 0,0, 2000, 1400 ), alpha=72)
+        if planet_which_you_ch == 17:
+            gradientRect( screen, (121, 65, 232), (177, 81, 237), pygame.Rect( 0,0, 2000, 1400 ), alpha=62)
+        if planet_which_you_ch == 18:
+            gradientRect( screen, (212, 107, 32), (214, 187, 94), pygame.Rect( 0,0, 2000, 1400 ), alpha=72)
+        if planet_which_you_ch == 19:
+            gradientRect( screen, (163, 162, 160), (120, 119, 116), pygame.Rect( 0,0, 2000, 1400 ), alpha=62)
+        if planet_which_you_ch == 20:
+            gradientRect( screen, (20, 20, 20), (0, 0, 0), pygame.Rect( 0,0, 2000, 1400 ), alpha=22)
+        if planet_which_you_ch == 21:
+            gradientRect( screen, (185, 230, 235), (192, 205, 207), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 22:
+            gradientRect( screen, (58, 39, 69), (41, 37, 43), pygame.Rect( 0,0, 2000, 1400 ), alpha=82)
+        if planet_which_you_ch == 23:
+            gradientRect( screen, (201, 68, 58), (232, 154, 77), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 24:
+            gradientRect( screen, (237, 232, 228), (233, 210, 247), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        if planet_which_you_ch == 25:
+            gradientRect( screen, (130, 255, 209), (226, 189, 240), pygame.Rect( 0,0, 2000, 1400 ), alpha=52)
+        
+        
+        if player.rect.y < 353:
+            is_moving_up = False
+        if player.rect.y > 800:
+            is_moving_down = False
+        if player.rect.x < 0:
+            is_moving_left = False
+        if player.rect.x > 1500:
+            is_moving_right = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 saving_game()
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    is_moving_left = True
+                    if player.rect.x > 0:
+                        is_moving_left = True
                 if event.key == pygame.K_d:
-                    is_moving_right = True
+                    if player.rect.x < 1500:
+                        is_moving_right = True
                 if event.key == pygame.K_w:
-                    is_moving_up = True
+                    if player.rect.y > 353:
+                        is_moving_up = True
                 if event.key == pygame.K_s:
-                    is_moving_down = True
+                    if player.rect.y < 800:
+                        is_moving_down = True
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     saving_game()
-                if event.key == pygame.K_q:
-                    is_using_grenade = True
+                if skill_player_have[5] == 1:
+                    if event.key == pygame.K_q:
+                        is_using_grenade = True
+                if skill_player_have[16] == 1:
+                    if event.key == pygame.K_v:
+                        is_using_grenade_el = True
                 if event.key == pygame.K_SPACE:
                     is_shooting = True
 
@@ -6864,9 +7085,14 @@ while run:
                     is_moving_left = False
                 if event.key == pygame.K_d:
                     is_moving_right = False
-                if event.key == pygame.K_q:
-                    is_using_grenade = False
-                    is_grenade_thrown = False
+                if skill_player_have[5] == 1:
+                    if event.key == pygame.K_q:
+                        is_using_grenade = False
+                        is_grenade_thrown = False
+                if skill_player_have[16] == 1:
+                    if event.key == pygame.K_v:
+                        is_using_grenade_el = False
+                        is_grenade_thrown_el = False
                 if event.key == pygame.K_w:
                     is_moving_up = False
                 if event.key == pygame.K_s:
