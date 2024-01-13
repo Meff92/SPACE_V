@@ -761,8 +761,8 @@ while run:
             screen.blit(ship_im, (580, y_for_ship_pos))
 
         draw_text("SPACE V", font_2, (255, 255, 255), 10, 90)
-        draw_text("ver 0.6", font, (155, 55, 95), 1440, 860)
-        draw_text("ver 0.6", font, (90, 90, 90), 1440, 858)
+        draw_text("ver 0.7", font, (191, 224, 203), 1440, 860)
+        draw_text("ver 0.7", font, (90, 90, 90), 1440, 858)
         
         y_for_ship_pos += floating_ship_speed
         if y_for_ship_pos >= 320:
