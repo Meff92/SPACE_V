@@ -3,9 +3,10 @@ import os
 import random
 import math
 
+
+#https://drive.google.com/file/d/1YEXAKkylm15b8VHYQXRGiltM4FGgiKn5/view?usp=drive_link
 pygame.init()
 
-#https://drive.google.com/file/d/1_ejM_sIwi-qAItSZAAS3mZQ-A62-DE9p/view?usp=sharing
 
 # Screen
 info = pygame.display.Info()
@@ -30,13 +31,13 @@ is_moving_right = False
 is_moving_down = False
 is_moving_up = False
 is_shooting = False
+is_reloading = False
 is_using_grenade = False
 is_grenade_thrown = False
 is_using_grenade_el = False
 is_grenade_thrown_el = False
 
 # Images
-bullet_image = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
 grenade_image = pygame.image.load('project-VAK/img/shoot/grenade.png').convert_alpha()
 grenade_image = pygame.transform.scale(grenade_image, (int(grenade_image.get_width() * 4), int(grenade_image.get_height() * 4)))
 grenade_image_el = pygame.image.load('project-VAK/img/shoot/grenade_el.png').convert_alpha()
@@ -80,17 +81,18 @@ def get_angle_to_cursor(player_rect):
     return angle_deg
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale, speed, ammo, grenades, grenades_elect=3):
+    def __init__(self, x, y, scale, speed, health, ammo, reload_time, grenades=5, grenades_elect=3):
         pygame.sprite.Sprite.__init__(self)
         self.is_alive = True
         self.speed = speed
         self.ammo = ammo
         self.start_ammo = ammo
         self.shoot_cooldown = 0
+        self.reload_time = reload_time
         self.direction = 1
         self.grenades = grenades
         self.grenades_elect = grenades_elect
-        self.health = 100
+        self.health = health
         self.max_health = self.health
         self.v_vel = 0
         self.is_jumping = False
@@ -117,20 +119,254 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self):
         if self.shoot_cooldown == 0 and self.ammo > 0:
-            self.shoot_cooldown = 20
-            # Get the angle to the cursor
             angle = get_angle_to_cursor(self.rect)
-            bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player")
-            bullet_group.add(bullet)
-            self.ammo -= 1
+            if guns_player_have[1-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 10, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[2-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 14, 15, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[3-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 9, 10, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 8, 10, 1)
+                bullet_group.add(bullet1)
+                self.ammo -= 2
+            if guns_player_have[4-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 5, 30, 3)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[5-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 7, 50, 2)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[6-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 15, 25, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[7-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 30, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[8-1] == 2:
+                self.shoot_cooldown = 0
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 20, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[9-1] == 2:
+                self.shoot_cooldown = 2
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 30, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[10-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 4, 50, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[11-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 16, 60, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 15, 60, 1)
+                bullet_group.add(bullet1)
+                bullet2 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 14, 60, 1)
+                bullet_group.add(bullet2)
+                self.ammo -= 3
+            if guns_player_have[12-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 14, 75, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 13, 75, 1)
+                bullet_group.add(bullet1)
+                self.ammo -= 2
+            if guns_player_have[13-1] == 2:
+                self.shoot_cooldown = 0
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 24, 100, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[14-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 18, 120, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 17, 120, 1)
+                bullet_group.add(bullet1)
+                bullet2 = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 16, 120, 1)
+                bullet_group.add(bullet2)
+                self.ammo -= 3
+            if guns_player_have[15-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 18, 150, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[16-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 170, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[17-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 190, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[18-1] == 2:
+                self.shoot_cooldown = 2
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 14, 185, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[19-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 12, 250, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[20-1] == 2:
+                self.shoot_cooldown = 2
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player", 28, 120, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[21-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",15, 200, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",15, 200, 1)
+                bullet_group.add(bullet1)
+                self.ammo -= 2
+            if guns_player_have[22-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 200, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",11, 200, 1)
+                bullet_group.add(bullet1)
+                self.ammo -= 2
+            if guns_player_have[23-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 320, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[25-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",15, 280, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[26-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",32, 300, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[27-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",24, 320, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[28-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",14, 350, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",13, 350, 1)
+                bullet_group.add(bullet1)
+                bullet2 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 350, 1)
+                bullet_group.add(bullet2)
+                bullet3 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",11, 350, 1)
+                bullet_group.add(bullet3)
+                self.ammo -= 4
+            if guns_player_have[29-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",16, 300, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[30-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",14, 360, 1)
+                bullet_group.add(bullet)
+                bullet1 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",13, 360, 1)
+                bullet_group.add(bullet1)
+                bullet2 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 360, 1)
+                bullet_group.add(bullet2)
+                bullet3 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",11, 360, 1)
+                bullet_group.add(bullet3)
+                bullet4 = Bullet(self.rect.centerx, self.rect.centery, angle, "player",10, 360, 1)
+                bullet_group.add(bullet4)
+                self.ammo -= 5
+            if guns_player_have[31-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",8, 490, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[32-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 430, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[33-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 480, 2)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[34-1] == 2:
+                self.shoot_cooldown = 2
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",12, 400, 1)
+                bullet_group.add(bullet)
+                self.ammo -= 1
+            if guns_player_have[35-1] == 2:
+                self.shoot_cooldown = 20
+                angle = get_angle_to_cursor(self.rect)
+                bullet = Bullet(self.rect.centerx, self.rect.centery, angle, "player",8, 700, 2)
+                bullet_group.add(bullet)
+                self.ammo -= 1
 
+    def reload_weapon(self):
+        self.reload_time -= 1
+        if self.reload_time == 0:
+            self.ammo = self.start_ammo
+            
 
     def update(self):
         self.update_animation()
         self.check_alive()
         if self.shoot_cooldown != 0:
             self.shoot_cooldown -= 1
-
+            
     def move(self, moving_left, moving_right, moving_down, moving_up):
         if moving_left and moving_right:
             dx = 0
@@ -180,14 +416,17 @@ class Player(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, angle, sender):
+    def __init__(self, x, y, angle, sender, speed, damage, size):
         pygame.sprite.Sprite.__init__(self)
-        self.speed = 12
+        self.speed = speed
+        bullet_image = pygame.image.load('project-VAK/img/shoot/player-shoot-hit1.png').convert_alpha()
+        bullet_image = pygame.transform.scale(bullet_image, (int(bullet_image.get_width() * size), int(bullet_image.get_height() * size)))
         self.image = bullet_image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.angle = angle
         self.sender = sender
+        self.damage = damage
 
     def update(self):
         # Update bullet position based on angle
@@ -201,12 +440,12 @@ class Bullet(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(player, bullet_group, False):
             if self.sender != "player":
                 if player.is_alive:
-                    player.health -= 20
+                    player.health -= self.damage
                     self.kill()
         for enemy in enemies_group:
             if pygame.sprite.spritecollide(enemy, bullet_group, False):
                 if enemy.is_alive:
-                    enemy.health -= 25
+                    enemy.health -= self.damage
                     self.kill()
 
 
@@ -354,19 +593,6 @@ grenade_group = pygame.sprite.Group()
 explosion_group = pygame.sprite.Group()
 sounds_group = list()
 
-player = Player(780, 460, 3, 5, 20, 5)
-player_for_menu = Player(500, 760, 2.7, 5, 20, 5)
-enemy = Player(400, 600, 3, 5, 20, 0)
-enemy1 = Player(300, 600, 3, 5, 20, 0)
-enemy2 = Player(200, 600, 3, 5, 20, 0)
-enemy3 = Player(700, 600, 3, 5, 20, 0)
-enemy4 = Player(800, 600, 3, 5, 20, 0)
-enemy5 = Player(900, 600, 3, 5, 20, 0)
-enemies_group.add(enemy)
-enemies_group.add(enemy1)
-enemies_group.add(enemy3)
-enemies_group.add(enemy4)
-enemies_group.add(enemy5)
 run = True
 
 stars = Animate_smt(random.randint(250, 280), 4, "gui/bg_men/menu_", True, 0.5, 0.5)
@@ -629,6 +855,126 @@ steel_cnt = int(saving[41])
 week_steel_cnt = int(saving[42])
 #---------------
 
+if skill_player_have[0] == 1:
+    health_player_constant = 150
+else:
+    health_player_constant = 100
+
+if skill_player_have[1] == 1:
+    speed_player_constant = 7
+else:
+    speed_player_constant = 5
+
+if skill_player_have[10] == 1:
+    reload_player_constant = 80
+else:
+    reload_player_constant = 40
+
+if guns_player_have[1 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[2 - 1] == 2:
+    ammo_for_player_constant = 15
+if guns_player_have[3 - 1] == 2:
+    ammo_for_player_constant = 20
+if guns_player_have[4 - 1] == 2:
+    ammo_for_player_constant = 30
+if guns_player_have[5 - 1] == 2:
+    ammo_for_player_constant = 25
+if guns_player_have[6 - 1] == 2:
+    ammo_for_player_constant = 30
+if guns_player_have[7 - 1] == 2:
+    ammo_for_player_constant = 40
+if guns_player_have[8 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[9 - 1] == 2:
+    ammo_for_player_constant = 25
+if guns_player_have[10 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[11 - 1] == 2:
+    ammo_for_player_constant = 3
+if guns_player_have[12 - 1] == 2:
+    ammo_for_player_constant = 30
+if guns_player_have[13 - 1] == 2:
+    ammo_for_player_constant = 5
+if guns_player_have[14 - 1] == 2:
+    ammo_for_player_constant = 50
+if guns_player_have[15 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[16 - 1] == 2:
+    ammo_for_player_constant = 30
+if guns_player_have[17 - 1] == 2:
+    ammo_for_player_constant = 20
+if guns_player_have[18 - 1] == 2:
+    ammo_for_player_constant = 30
+if guns_player_have[19 - 1] == 2:
+    ammo_for_player_constant = 1
+if guns_player_have[20 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[21 - 1] == 2:
+    ammo_for_player_constant = 4
+if guns_player_have[22 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[23 - 1] == 2:
+    ammo_for_player_constant = 1
+if guns_player_have[24 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[25 - 1] == 2:
+    ammo_for_player_constant = 40
+if guns_player_have[26 - 1] == 2:
+    ammo_for_player_constant = 5
+if guns_player_have[27 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[28 - 1] == 2:
+    ammo_for_player_constant = 16
+if guns_player_have[29 - 1] == 2:
+    ammo_for_player_constant = 20
+if guns_player_have[30 - 1] == 2:
+    ammo_for_player_constant = 25
+if guns_player_have[31 - 1] == 2:
+    ammo_for_player_constant = 1
+if guns_player_have[32 - 1] == 2:
+    ammo_for_player_constant = 45
+if guns_player_have[33 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[34 - 1] == 2:
+    ammo_for_player_constant = 40
+if guns_player_have[35 - 1] == 2:
+    ammo_for_player_constant = 1
+if guns_player_have[36 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[37 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[38 - 1] == 2:
+    ammo_for_player_constant = 9
+if guns_player_have[39 - 1] == 2:
+    ammo_for_player_constant = 40
+if guns_player_have[40 - 1] == 2:
+    ammo_for_player_constant = 10
+if guns_player_have[41 - 1] == 2:
+    ammo_for_player_constant = 10
+
+
+
+
+
+
+
+print(guns_player_have.index(2))
+player = Player(780, 460, 3, speed_player_constant, health_player_constant, ammo_for_player_constant, reload_player_constant)
+player_for_menu = Player(500, 760, 2.7, speed_player_constant, health_player_constant, 20, reload_player_constant)
+# enemy = Player(400, 600, 3, 5, 20, 0)
+# enemy1 = Player(300, 600, 3, 5, 20, 0)
+# enemy2 = Player(200, 600, 3, 5, 20, 0)
+# enemy3 = Player(700, 600, 3, 5, 20, 0)
+# enemy4 = Player(800, 600, 3, 5, 20, 0)
+# enemy5 = Player(900, 600, 3, 5, 20, 0)
+# enemies_group.add(enemy)
+# enemies_group.add(enemy1)
+# enemies_group.add(enemy3)
+# enemies_group.add(enemy4)
+# enemies_group.add(enemy5)
+
+#-------
 
 dice_pos = 320
 dice_rol = 0.7
@@ -762,8 +1108,8 @@ while run:
             screen.blit(ship_im, (580, y_for_ship_pos))
 
         draw_text("SPACE V", font_2, (255, 255, 255), 10, 90)
-        draw_text("ver 0.7", font, (191, 224, 203), 1440, 860)
-        draw_text("ver 0.7", font, (90, 90, 90), 1440, 858)
+        draw_text("ver 0.71", font, (91, 224, 3), 1430, 860)
+        draw_text("ver 0.71", font, (90, 90, 90), 1430, 858)
         
         y_for_ship_pos += floating_ship_speed
         if y_for_ship_pos >= 320:
@@ -885,17 +1231,21 @@ while run:
             else:
                 player_for_menu.update_action(0)
             player_for_menu.move(is_moving_left, is_moving_right, is_moving_down, is_moving_up)
-
+        if player_for_menu.rect.x < 0:
+            is_moving_left = False
+        if player_for_menu.rect.x > 1500:
+            is_moving_right = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 saving_game()
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    is_moving_left = True
+                    if player_for_menu.rect.x > 0:
+                        is_moving_left = True
                 if event.key == pygame.K_d:
-                    is_moving_right = True
+                    if player_for_menu.rect.x < 1500:
+                        is_moving_right = True
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     saving_game()
@@ -1021,27 +1371,31 @@ while run:
                         if mouse_pos[1] >= 90 and mouse_pos[1] <= 400:
                             page = 10
                             enter_galaxy_sound.play()
-                    if mouse_pos[0] >= 560 and mouse_pos[0] <= 910:
-                        if mouse_pos[1] >= 90 and mouse_pos[1] <= 400:
-                            page = 20
-                            enter_galaxy_sound.play()
-                    if mouse_pos[0] >= 1070 and mouse_pos[0] <= 1420:
-                        if mouse_pos[1] >= 90 and mouse_pos[1] <= 400:
-                            page = 30
-                            enter_galaxy_sound.play()
-
-                    if mouse_pos[0] >= 50 and mouse_pos[0] <= 400:
-                        if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
-                            page = 40
-                            enter_galaxy_sound.play()
-                    if mouse_pos[0] >= 560 and mouse_pos[0] <= 910:
-                        if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
-                            page = 50
-                            enter_galaxy_sound.play()
-                    if mouse_pos[0] >= 1070 and mouse_pos[0] <= 1420:
-                        if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
-                            page = 60
-                            enter_galaxy_sound.play()
+                    if ship_level > 1:
+                        if mouse_pos[0] >= 560 and mouse_pos[0] <= 910:
+                            if mouse_pos[1] >= 90 and mouse_pos[1] <= 400:
+                                page = 20
+                                enter_galaxy_sound.play()
+                    if ship_level > 2:
+                        if mouse_pos[0] >= 1070 and mouse_pos[0] <= 1420:
+                            if mouse_pos[1] >= 90 and mouse_pos[1] <= 400:
+                                page = 30
+                                enter_galaxy_sound.play()
+                    if ship_level > 3:
+                        if mouse_pos[0] >= 50 and mouse_pos[0] <= 400:
+                            if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
+                                page = 40
+                                enter_galaxy_sound.play()
+                    if ship_level > 4:
+                        if mouse_pos[0] >= 560 and mouse_pos[0] <= 910:
+                            if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
+                                page = 50
+                                enter_galaxy_sound.play()
+                    if ship_level > 5:
+                        if mouse_pos[0] >= 1070 and mouse_pos[0] <= 1420:
+                            if mouse_pos[1] >= 520 and mouse_pos[1] <= 810:
+                                page = 60
+                                enter_galaxy_sound.play()
         if page == 2:
             color_menu()
             back_im = pygame.image.load("project-VAK/img/gui/button_back.png").convert_alpha()
@@ -1293,6 +1647,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1351,6 +1706,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1409,6 +1765,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1467,6 +1824,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1525,6 +1883,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1583,6 +1942,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1641,6 +2001,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1698,6 +2059,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1755,6 +2117,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1812,6 +2175,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1870,6 +2234,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1928,6 +2293,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -1985,6 +2351,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2043,6 +2410,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2087,6 +2455,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
 
 
@@ -2143,6 +2512,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2203,6 +2573,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2263,6 +2634,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2321,6 +2693,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2379,6 +2752,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2437,6 +2811,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2497,6 +2872,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2554,6 +2930,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2612,6 +2989,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2671,6 +3049,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -2729,6 +3108,7 @@ while run:
                         run = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     if make_action == 3:
+                        make_action = 0
                         page = 1
                     if make_action == 2:
                         make_action = 0
@@ -6444,7 +6824,7 @@ while run:
                 gun1 = pygame.transform.scale(gun1, (int(gun1.get_width() * 4), int(gun1.get_height() * 4)))
                 
                 screen.blit(gun,(0, 250))
-                draw_text("shoots 9 bullets in all directions", font_4, (255,0,90), 470, 140)
+                draw_text("shoots 9 bullets in all directions", font_4, (255,0,90), 530, 170)
                 draw_text("Unleasher", font_3, (255,0,90), 450, 228)
                 draw_text("Unleasher", font_3, (255,255,255), 450, 230)
                 draw_text("unique", font_3, (255,0,90), 450, 280)
@@ -6474,7 +6854,7 @@ while run:
                 
 
                 screen.blit(gun,(0, 250))
-                draw_text("shoots a very fast burst of bullets", font_4, (255,0,90), 470, 140)
+                draw_text("shoots a very fast burst of bullets", font_4, (255,0,90), 530, 170)
                 draw_text("very very fast", font_4, (255,0,90), 530, 170)
                 draw_text("Andromeda mingun", font_3, (255,0,90), 450, 228)
                 draw_text("Andromeda mingun", font_3, (255,255,255), 450, 230)
@@ -6506,7 +6886,7 @@ while run:
                 gun1 = pygame.transform.scale(gun1, (int(gun1.get_width() * 4), int(gun1.get_height() * 4)))
                 
                 screen.blit(gun,(0, 250))
-                draw_text("shoots 9 bullets in all directions", font_4, (255,0,90), 470, 140)
+                draw_text("shoots 9 bullets in all directions", font_4, (255,0,90), 530, 170)
                 draw_text("Ultrazapper", font_3, (255,0,90), 450, 228)
                 draw_text("Ultrazapper", font_3, (255,255,255), 450, 230)
                 draw_text("unique", font_3, (255,0,90), 450, 280)
@@ -6955,6 +7335,11 @@ while run:
                 if is_shooting:
                     player.shoot()
                     is_shooting = False
+                elif is_reloading:
+                    player.reload_weapon()
+                    if player.reload_time == 0:
+                        player.reload_time = reload_player_constant
+                        is_reloading = False
                 elif is_using_grenade and not is_grenade_thrown and player.grenades > 0:
                     is_using_grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction),
                                             player.rect.top,
@@ -6992,6 +7377,7 @@ while run:
                 screen.blit(front1, (1300 , 355))
                 screen.blit(front1, (900 , 655))
                 screen.blit(front2, (300 , 585))
+
         if planet_which_you_ch == 1:
             gradientRect( screen, (86, 177, 219), (0, 0, 0), pygame.Rect( 0,0, 2000, 1400 ) )
         if planet_which_you_ch == 2:
@@ -7080,7 +7466,9 @@ while run:
                         is_using_grenade_el = True
                 if event.key == pygame.K_SPACE:
                     is_shooting = True
-
+                if event.key == pygame.K_r:
+                    if player.ammo == 0:
+                        is_reloading = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     is_moving_left = False
